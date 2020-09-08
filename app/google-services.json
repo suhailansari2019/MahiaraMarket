@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "832480478552",
+    "firebase_url": "https://mahiaramarket.firebaseio.com",
+    "project_id": "mahiaramarket",
+    "storage_bucket": "mahiaramarket.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:832480478552:android:29d6723df2b132593c512d",
+        "android_client_info": {
+          "package_name": "com.example.mahiaramarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "832480478552-nde2bmthveippi3fr7iu6n6ej62at6i1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiinAdileqeOa9m6FSVuwjEDcYaab6_6g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "832480478552-nde2bmthveippi3fr7iu6n6ej62at6i1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
