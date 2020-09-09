@@ -1,6 +1,5 @@
 package com.example.mahiaramarket;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -111,7 +110,7 @@ private TextView alreadyHaveAnAccount;
         password = view.findViewById(R.id.sign_up_password);
         confirmpassword = view.findViewById(R.id.sign_up_confirm_password);
 
-        closeBtn = view.findViewById(R.id.sign_up_close_btn);
+        closeBtn = view.findViewById(R.id.sign_in_close_btn);
         signUpBtn = view.findViewById(R.id.sign_up_btn);
 
         progressBar = view.findViewById(R.id.sign_up_progressbar);
@@ -130,6 +129,12 @@ private TextView alreadyHaveAnAccount;
                   setFragment(new SignInFragment());
             }
         }));
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainIntent();
+            }
+        });
 
         email.addTextChangedListener(new TextWatcher() {
             @Override
@@ -266,9 +271,7 @@ private TextView alreadyHaveAnAccount;
                                                @Override
                                                public void onComplete(@NonNull Task<DocumentReference> task) {
                                                     if(task.isSuccessful()){
-                                                        Intent mainIntent = new Intent(getActivity(),HomeActivity.class);
-                                                        startActivity(mainIntent);
-                                                        getActivity().finish();
+                                                       mainIntent();
                                                     }else{
                                                         progressBar.setVisibility(View.INVISIBLE);
                                                         signUpBtn.setEnabled(true);
@@ -296,5 +299,10 @@ private TextView alreadyHaveAnAccount;
         }else{
                   email.setError("invalid mail Id");
         }
+    }
+    private  void mainIntent(){
+        Intent mainIntent = new Intent(getActivity(),HomeActivity2.class);
+        startActivity(mainIntent);
+        getActivity().finish();
     }
 }

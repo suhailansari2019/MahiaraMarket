@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <ImageButton
-            android:id="@+id/sign_up_close_btn"
+            android:id="@+id/sign_in_close_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
