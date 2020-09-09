@@ -30,13 +30,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SignUpFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SignUpFragment<firebaseAuth> extends Fragment {
+public class SignUpFragment<firebaseAuth, firebaseFirestore> extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -64,6 +69,7 @@ private TextView alreadyHaveAnAccount;
     private ProgressBar progressBar;
      private FirebaseAuth firebaseAuth;
      private  String emailPattern ="[a-zA-Z0-9._-]+@[a-z]+.[a-z]+";
+    private FirebaseFirestore firebaseFirestore;
 
     /**
      * Use this factory method to create a new instance of
@@ -110,6 +116,8 @@ private TextView alreadyHaveAnAccount;
 
         progressBar = view.findViewById(R.id.sign_up_progressbar);
          firebaseAuth = FirebaseAuth.getInstance();
+         firebaseFirestore = firebaseFirestore.getInstance();
+
         return  view;
     }
 
@@ -248,9 +256,31 @@ private TextView alreadyHaveAnAccount;
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                if(task.isSuccessful()){
-                                   Intent mainIntent = new Intent(getActivity(),HomeActivity.class);
-                                   startActivity(mainIntent);
-                                   getActivity().finish();
+
+                                   Map <Object,String> userdata = new HashMap<>();
+                                   userdata.put("fullname",fullName.getText().toString());
+
+                                   firebaseFirestore.collection("USER")
+                                           .add(userdata)
+                                           .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                               @Override
+                                               public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if(task.isSuccessful()){
+                                                        Intent mainIntent = new Intent(getActivity(),HomeActivity.class);
+                                                        startActivity(mainIntent);
+                                                        getActivity().finish();
+                                                    }else{
+                                                        progressBar.setVisibility(View.INVISIBLE);
+                                                        signUpBtn.setEnabled(true);
+                                                        signUpBtn.setTextColor(Color.argb(50f,255,255,255));
+                                                        String error =task.getException().getMessage();
+                                                        Toast.makeText(getActivity(),error,Toast.LENGTH_SHORT).show();
+
+                                                    }
+                                               }
+                                           });
+
+
                                }else{
                                    progressBar.setVisibility(View.INVISIBLE);
                                    signUpBtn.setEnabled(true);
