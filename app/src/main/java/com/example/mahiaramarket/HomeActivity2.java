@@ -1,13 +1,18 @@
 package com.example.mahiaramarket;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.FrameLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -16,9 +21,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class HomeActivity2 extends AppCompatActivity {
+public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+
+    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +33,9 @@ public class HomeActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_home2);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -45,6 +47,10 @@ public class HomeActivity2 extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        frameLayout = findViewById(R.id.main_framelayout);
+        setFragment(new Home3Fragment());
     }
 
     @Override
@@ -55,9 +61,56 @@ public class HomeActivity2 extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.main_search_icon) {
+            //todo:serach
+            return true;
+        } else if (id == R.id.main_notification_icon) {
+            //todo:notification
+            return true;
+        } else if (id == R.id.main_cart_icon) {
+            //todo:cart
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.nav_my_mall) {
+
+        } else if (id == R.id.nav_my_orders) {
+
+        } else if (id == R.id.nav_my_rewards) {
+
+        } else if (id == R.id.nav_my_cart) {
+
+        } else if (id == R.id.nav_my_wishlist) {
+
+        } else if (id == R.id.nav_my_account) {
+
+        } else if(id == R.id.nav_sign_out){
+
+        }
+        return false;
+    }
+
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void setFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(frameLayout.getId(),fragment);
+        fragmentTransaction.commit();
     }
 }
