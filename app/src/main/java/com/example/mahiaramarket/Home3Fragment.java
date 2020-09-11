@@ -1,7 +1,9 @@
 package com.example.mahiaramarket;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +15,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +56,17 @@ public class Home3Fragment extends Fragment {
     final private long PERIOD_TIME = 3000;
 
     ///////// Banner Slider
+    //////// Strip ad layout
+private ImageView stripAdImage;
+private ConstraintLayout stripAdContainer;
+    //////// Strip ad layout
+    ////////Horizontal product layout
+     private TextView horizontalLayoutTitle;
+     private Button horizontalViewAllBtn;
+     private RecyclerView horizontalRecyclerView;
+
+    ////////Horizontal product layout
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -109,25 +126,27 @@ public class Home3Fragment extends Fragment {
         bannersliderViewPager = view.findViewById(R.id.banner_slider_view_pager);
         sliderModelList = new ArrayList<SliderModel>();
 
-        sliderModelList.add(new SliderModel(R.mipmap.logo_circle));
-        sliderModelList.add(new SliderModel(R.mipmap.logo_square));
+        sliderModelList.add(new SliderModel(R.mipmap.logo_circle,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.logo_square,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.dummyimage,"#077AE4"));
 
-        sliderModelList.add(new SliderModel(R.mipmap.dummyimage));
-        sliderModelList.add(new SliderModel(R.mipmap.cart_icon_black));
-        sliderModelList.add(new SliderModel(R.mipmap.mail));
-        sliderModelList.add(new SliderModel(R.mipmap.market_logo));
-        sliderModelList.add(new SliderModel(R.mipmap.banner));
-        sliderModelList.add(new SliderModel(R.mipmap.logo_circle));
-        sliderModelList.add(new SliderModel(R.mipmap.logo_square));
+        sliderModelList.add(new SliderModel(R.mipmap.cart_icon_black,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.mail,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.market_logo,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.banner,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.logo_circle,"#077AE4"));
 
-        sliderModelList.add(new SliderModel(R.mipmap.dummyimage));
-        sliderModelList.add(new SliderModel(R.mipmap.cart_icon_black));
+        sliderModelList.add(new SliderModel(R.mipmap.logo_square,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.dummyimage,"#077AE4"));
+        sliderModelList.add(new SliderModel(R.mipmap.cart_icon_black,"#077AE4"));
 
 
         SliderAdapter sliderAdapter =new SliderAdapter(sliderModelList);
         bannersliderViewPager.setAdapter(sliderAdapter);
         bannersliderViewPager.setClipToPadding(false);
         bannersliderViewPager.setPageMargin(20);
+
+        bannersliderViewPager.setCurrentItem(currentPage);
 
         ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
             @Override
@@ -164,6 +183,70 @@ public class Home3Fragment extends Fragment {
         });
 
 ////////// Banner Slider
+
+        //////// Strip ad layout
+        stripAdImage = view.findViewById(R.id.strip_ad_image);
+        stripAdContainer = view.findViewById(R.id.strip_ad_container);
+
+        stripAdImage.setImageResource(R.mipmap.bannerad);
+        stripAdContainer.setBackgroundColor(Color.parseColor("#077AE4"));
+
+        //////// Strip ad layout
+        /////// Horizontal Product layout
+      horizontalLayoutTitle = view.findViewById(R.id.horizontal_scroll_layout_title);
+      horizontalViewAllBtn = view.findViewById(R.id.horizontal_scroll_view_all_layout_btn);
+      horizontalRecyclerView = view.findViewById(R.id.horizontal_scroll_layout_recyclerview);
+
+      List<HorizontalScrollProductModel> horizontalScrollProductModelList = new ArrayList<>();
+      horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.dummyimage,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.logo_square,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.logo_circle,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.add_profile_logo,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.mail,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.cart_icon_black,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.dummyimage,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.heart_icon_black,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+
+      HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalScrollProductModelList);
+      LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+      linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+      horizontalRecyclerView.setLayoutManager(linearLayoutManager);
+
+      horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
+      horizontalProductScrollAdapter.notifyDataSetChanged();
+
+
+        /////// Horizontal Product layout
+        ////////////////////////////////
+
+        RecyclerView testing = view.findViewById(R.id.testing);
+        LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
+        testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        testing.setLayoutManager(testingLayoutManager);
+
+        List<HomePageModel>homePageModelList = new ArrayList<>();
+        homePageModelList.add(new HomePageModel(0,sliderModelList));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#000000"));
+        homePageModelList.add(new HomePageModel(0,sliderModelList));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#ffff00"));
+        homePageModelList.add(new HomePageModel(0,sliderModelList));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#ff0000"));
+
+
+        HomePageAdapter adapter = new HomePageAdapter(homePageModelList);
+        testing.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        //////////////////////////////
+
+
+        //////Grid Product Layout
+       TextView gridLayoutTitle = view.findViewById(R.id.grid_product_layout_title);
+       Button gridlayoutViewAllBtn = view.findViewById(R.id.grid_product_layout_view_all_btn);
+        GridView gridView = view.findViewById(R.id.grid_product_layout_grid_view);
+
+        gridView.setAdapter(new GridProductLayoutAdapter(horizontalScrollProductModelList));
+
+        //////Grid Product Layout
         return view;
     }
 
