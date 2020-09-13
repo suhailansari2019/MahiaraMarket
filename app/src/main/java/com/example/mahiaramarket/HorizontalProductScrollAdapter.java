@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +43,11 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
 
     @Override
     public int getItemCount() {
-        return horizontalScrollProductModelList.size();
+        if(horizontalScrollProductModelList.size()>8){
+           return  8;
+        }else{
+           return  horizontalScrollProductModelList.size();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,13 +56,20 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         private TextView productDescription;
         private TextView productPrice;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.horizontal_hs_product_image);
             productTitle= itemView.findViewById(R.id.h_s_product_title);
             productDescription = itemView.findViewById(R.id.h_s_product_description);
             productPrice = itemView.findViewById(R.id.h_s_product_price);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent productDetailsIntent = new Intent(itemView.getContext(),ProductDetailsActivity.class);
+                    itemView.getContext().startActivity(productDetailsIntent);
+                }
+            });
 
         }
         private void setProductImage(int resource){

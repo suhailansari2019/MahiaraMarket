@@ -5,6 +5,8 @@ import java.util.List;
 public class HomePageModel {
     public static final int BANNER_SLIDER = 0;
     public  static  final int STRIP_BANNER =1;
+    public static final int HORIZONTAL_PRODUCT_VIEW = 2;
+    public static final int GRID_PRODUCT_VIEW = 3;
 
     private  int type;
 
@@ -54,4 +56,28 @@ public class HomePageModel {
         this.backgroundColor = backgroundColor;
     }
     //////////////strip Ad////////////////
+
+    /////// Horizontal Product layout  && GRID product Layout
+  private  String title;
+    private List<HorizontalScrollProductModel> horizontalScrollProductModelList;
+
+    public HomePageModel(int type, String title, List<HorizontalScrollProductModel> horizontalScrollProductModelList) {
+        this.type = type;
+        this.title = title;
+        this.horizontalScrollProductModelList = horizontalScrollProductModelList;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public List<HorizontalScrollProductModel> getHorizontalScrollProductModelList() {
+        return horizontalScrollProductModelList;
+    }
+    public void setHorizontalScrollProductModelList(List<HorizontalScrollProductModel> horizontalScrollProductModelList) {
+        this.horizontalScrollProductModelList = horizontalScrollProductModelList;
+    }
+    /////// Horizontal Product layout && GRID product Layout
+
 }

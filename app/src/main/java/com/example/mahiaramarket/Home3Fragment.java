@@ -46,26 +46,8 @@ public class Home3Fragment extends Fragment {
     }
     private RecyclerView categoryRecylerView;
     private  CategoryAdapter categoryAdapter;
+    private RecyclerView testing;
 
-     ///////// Banner Slider
-    private ViewPager bannersliderViewPager;
-    private List<SliderModel> sliderModelList;
-    private int currentPage = 2;
-    private Timer timer;
-    final private long DELAY_TIME = 3000;
-    final private long PERIOD_TIME = 3000;
-
-    ///////// Banner Slider
-    //////// Strip ad layout
-private ImageView stripAdImage;
-private ConstraintLayout stripAdContainer;
-    //////// Strip ad layout
-    ////////Horizontal product layout
-     private TextView horizontalLayoutTitle;
-     private Button horizontalViewAllBtn;
-     private RecyclerView horizontalRecyclerView;
-
-    ////////Horizontal product layout
 
     /**
      * Use this factory method to create a new instance of
@@ -105,7 +87,7 @@ private ConstraintLayout stripAdContainer;
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         categoryRecylerView.setLayoutManager(layoutManager);
 
-        List<CategoryModel>categoryModelList = new ArrayList<CategoryModel>();
+        final List<CategoryModel>categoryModelList = new ArrayList<CategoryModel>();
         categoryModelList.add(new CategoryModel("link","Home"));
         categoryModelList.add(new CategoryModel("link","Persnolized Jewellery"));
         categoryModelList.add(new CategoryModel("link","Necklace"));
@@ -123,8 +105,8 @@ private ConstraintLayout stripAdContainer;
         categoryRecylerView.setAdapter(categoryAdapter);
         categoryAdapter.notifyDataSetChanged();
 //////////Banner Slider
-        bannersliderViewPager = view.findViewById(R.id.banner_slider_view_pager);
-        sliderModelList = new ArrayList<SliderModel>();
+
+        List<SliderModel>sliderModelList = new ArrayList<SliderModel>();
 
         sliderModelList.add(new SliderModel(R.mipmap.logo_circle,"#077AE4"));
         sliderModelList.add(new SliderModel(R.mipmap.logo_square,"#077AE4"));
@@ -140,153 +122,46 @@ private ConstraintLayout stripAdContainer;
         sliderModelList.add(new SliderModel(R.mipmap.dummyimage,"#077AE4"));
         sliderModelList.add(new SliderModel(R.mipmap.cart_icon_black,"#077AE4"));
 
-
-        SliderAdapter sliderAdapter =new SliderAdapter(sliderModelList);
-        bannersliderViewPager.setAdapter(sliderAdapter);
-        bannersliderViewPager.setClipToPadding(false);
-        bannersliderViewPager.setPageMargin(20);
-
-        bannersliderViewPager.setCurrentItem(currentPage);
-
-        ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                    currentPage = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-               if(state == ViewPager.SCROLL_STATE_IDLE){
-                   pageLooper();
-               }
-            }
-        };
-        bannersliderViewPager.addOnPageChangeListener(onPageChangeListener);
-
-        startbannerslideshow();
-
-        bannersliderViewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                pageLooper();
-                stopbannerslideshow();
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP){
-                    startbannerslideshow();
-                }
-                return false;
-            }
-        });
-
 ////////// Banner Slider
 
-        //////// Strip ad layout
-        stripAdImage = view.findViewById(R.id.strip_ad_image);
-        stripAdContainer = view.findViewById(R.id.strip_ad_container);
 
-        stripAdImage.setImageResource(R.mipmap.bannerad);
-        stripAdContainer.setBackgroundColor(Color.parseColor("#077AE4"));
 
-        //////// Strip ad layout
         /////// Horizontal Product layout
-      horizontalLayoutTitle = view.findViewById(R.id.horizontal_scroll_layout_title);
-      horizontalViewAllBtn = view.findViewById(R.id.horizontal_scroll_view_all_layout_btn);
-      horizontalRecyclerView = view.findViewById(R.id.horizontal_scroll_layout_recyclerview);
-
       List<HorizontalScrollProductModel> horizontalScrollProductModelList = new ArrayList<>();
-      horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.dummyimage,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.logo_square,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.logo_circle,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.add_profile_logo,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.mail,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.cart_icon_black,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.dummyimage,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.mipmap.heart_icon_black,"Persnolized Necklace","Gold,Black,RoseGold","999"));
-
-      HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalScrollProductModelList);
-      LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-      linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-      horizontalRecyclerView.setLayoutManager(linearLayoutManager);
-
-      horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
-      horizontalProductScrollAdapter.notifyDataSetChanged();
-
-
+      horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_1,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_2,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_3,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_4,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_1,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_2,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_3,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_4,"Persnolized Necklace","Gold,Black,RoseGold","999"));
+        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(R.drawable.img_1,"Persnolized Necklace","Gold,Black,RoseGold","999"));
         /////// Horizontal Product layout
         ////////////////////////////////
 
-        RecyclerView testing = view.findViewById(R.id.testing);
+        testing = view.findViewById(R.id.home_page_recyclerview);
         LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
         testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         testing.setLayoutManager(testingLayoutManager);
 
         List<HomePageModel>homePageModelList = new ArrayList<>();
         homePageModelList.add(new HomePageModel(0,sliderModelList));
-        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#000000"));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#0063fd"));
+        homePageModelList.add(new HomePageModel(2,"Deal's of Today",horizontalScrollProductModelList));
+        homePageModelList.add(new HomePageModel(3,"Deal's of Today",horizontalScrollProductModelList));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#0063fd"));
+        homePageModelList.add(new HomePageModel(3,"Deal's of Today",horizontalScrollProductModelList));
+        homePageModelList.add(new HomePageModel(2,"Deal's of Today",horizontalScrollProductModelList));
+        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#0063fd"));
         homePageModelList.add(new HomePageModel(0,sliderModelList));
-        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#ffff00"));
-        homePageModelList.add(new HomePageModel(0,sliderModelList));
-        homePageModelList.add(new HomePageModel(1,R.mipmap.bannerad,"#ff0000"));
 
 
         HomePageAdapter adapter = new HomePageAdapter(homePageModelList);
         testing.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         //////////////////////////////
-
-
-        //////Grid Product Layout
-       TextView gridLayoutTitle = view.findViewById(R.id.grid_product_layout_title);
-       Button gridlayoutViewAllBtn = view.findViewById(R.id.grid_product_layout_view_all_btn);
-        GridView gridView = view.findViewById(R.id.grid_product_layout_grid_view);
-
-        gridView.setAdapter(new GridProductLayoutAdapter(horizontalScrollProductModelList));
-
-        //////Grid Product Layout
         return view;
     }
-
-    ////////// Banner Slider
-private  void pageLooper(){
-        if(currentPage == sliderModelList.size()-2){
-            currentPage = 2;
-            bannersliderViewPager.setCurrentItem(currentPage,false);
-        }
-    if(currentPage == 1){
-        currentPage = sliderModelList.size() - 3;
-        bannersliderViewPager.setCurrentItem(currentPage,false);
-    }
-}
-
-private void startbannerslideshow(){
-    final Handler handler = new Handler();
-    final Runnable update = new Runnable() {
-        @Override
-        public void run() {
-            if(currentPage >= sliderModelList.size()){
-                currentPage = 1;
-            }
-            bannersliderViewPager.setCurrentItem(currentPage++,true);
-        }
-    };
-    timer = new Timer();
-    timer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-            handler.post(update);
-        }
-    },DELAY_TIME,PERIOD_TIME);
-}
-
-private void stopbannerslideshow(){
-        timer.cancel();
-
-}
-////////// Banner Slider
-
 
 }

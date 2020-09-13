@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +35,7 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder holder, int position) {
      String icon = categoryModelList.get(position).getCategoryIconlink();
      String name = categoryModelList.get(position).getCategoryName();
-     holder.setCategoryName(name);
+     holder.setCategory(name,position);
     }
 
     @Override
@@ -54,8 +55,21 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
         private void setCategoryIcon(){
             ////todo:set categoryicon here
         }
-        private  void setCategoryName(String name){
+        private  void setCategory(final String name, final int position){
             categoryName.setText(name);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(position !=0) {
+
+
+                        Intent categoryIntent = new Intent(itemView.getContext(), CategoryActivity.class);
+                        categoryIntent.putExtra("CategoryName", name);
+                        itemView.getContext().startActivity(categoryIntent);
+                    }
+                }
+            });
+
         }
     }
 
