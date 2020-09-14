@@ -5,6 +5,7 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.content.Intent;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,13 +36,19 @@ public class GridProductLayoutAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View converView, ViewGroup viewGroup) {
+    public View getView(int position, View converView, final ViewGroup viewGroup) {
         View view ;
         if(converView == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.horizontal_scroll_item_layout, null);
            view.setElevation(0);
             //view.setBackgroundColor(Color.parseColor("#ffffff"));
-
+ view.setOnClickListener(new View.OnClickListener() {
+     @Override
+     public void onClick(View view) {
+         Intent productDetailsIntent = new Intent(viewGroup.getContext(),ProductDetailsActivity.class);
+         viewGroup.getContext().startActivity(productDetailsIntent);
+     }
+ });
 
             ImageView productImage = view.findViewById(R.id.horizontal_hs_product_image);
             TextView productTitle = view.findViewById(R.id.h_s_product_title);

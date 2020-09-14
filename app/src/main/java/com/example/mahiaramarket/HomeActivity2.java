@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.FrameLayout;
 
+import com.example.mahiaramarket.ui.home.HomeFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -24,9 +25,12 @@ import androidx.appcompat.widget.Toolbar;
 public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private static  final int HOME_FRAGMENT = 0;
+    private static final int CART_FRAGMENT = 1;
 
     private FrameLayout frameLayout;
-
+    private static int currentFragment;
+    private NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +41,8 @@ public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -50,13 +55,16 @@ public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
         navigationView.getMenu().getItem(0).setChecked(true);
 
         frameLayout = findViewById(R.id.main_framelayout);
-        setFragment(new Home3Fragment());
+        setFragment(new Home3Fragment(), HOME_FRAGMENT);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_activity2, menu);
+        if(currentFragment == HOME_FRAGMENT){
+            getMenuInflater().inflate(R.menu.home_activity2, menu);
+        }
+
         return true;
     }
 
@@ -72,24 +80,30 @@ public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
             //todo:notification
             return true;
         } else if (id == R.id.main_cart_icon) {
-            //todo:cart
+           myCart();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void myCart() {
+        invalidateOptionsMenu();
+        setFragment(new MyCartFragment(),CART_FRAGMENT);
+        navigationView.getMenu().getItem(3).setChecked(true);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_my_mall) {
-
+setFragment(new HomeFragment(),HOME_FRAGMENT);
         } else if (id == R.id.nav_my_orders) {
 
         } else if (id == R.id.nav_my_rewards) {
 
         } else if (id == R.id.nav_my_cart) {
-
+myCart();
         } else if (id == R.id.nav_my_wishlist) {
 
         } else if (id == R.id.nav_my_account) {
@@ -108,7 +122,8 @@ public class HomeActivity2 extends AppCompatActivity implements HomeActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void setFragment(Fragment fragment){
+    private void setFragment(Fragment fragment,int FragmentNo){
+        currentFragment = FragmentNo;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(frameLayout.getId(),fragment);
         fragmentTransaction.commit();
