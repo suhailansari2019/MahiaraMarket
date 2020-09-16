@@ -113,9 +113,9 @@ private ImageView freeCoupenIcon;
                 freeCoupens.setVisibility(View.VISIBLE);
                 if(freeCoupensNo == 1) {
 
-                    freeCoupens.setText("free" + freeCoupensNo + "Coupen");
+                    freeCoupens.setText("free" + freeCoupensNo + " Coupen");
                 }else{
-                    freeCoupens.setText("free" + freeCoupensNo + "Coupens");
+                    freeCoupens.setText("free" + freeCoupensNo + " Coupens");
                 }
             }else{
                 freeCoupenIcon.setVisibility(View.INVISIBLE);
@@ -125,7 +125,7 @@ private ImageView freeCoupenIcon;
             cuttedPrice.setText(cuttedPriceText);
             if(offersAppliedNo > 0){
                 offersApplied.setVisibility(View.VISIBLE);
-                offersApplied.setText(offersAppliedNo+"Offers Applied");
+                offersApplied.setText(offersAppliedNo+ " Offers Applied");
             }else{
                 offersApplied.setVisibility(View.INVISIBLE);
             }

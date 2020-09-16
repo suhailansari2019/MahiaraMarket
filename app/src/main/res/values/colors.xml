@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="btnRed">#9f0000</color>
+    <color name= "white">#ffffff</color>
     <color name="successesGreen">#11A10C</color>
+    <color name="recyclerViewBackground">#d6d6d6</color>
 </resources>
