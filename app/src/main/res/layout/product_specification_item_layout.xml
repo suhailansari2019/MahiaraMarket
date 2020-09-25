@@ -20,21 +20,21 @@
 
         <TextView
             android:id="@+id/tv_feature_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Feature name"
+            android:layout_weight="2"
+            android:text="Feature Name"
             android:textColor="#A19E9E"
              android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_feature_value"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:textSize="12sp"
-            android:text="feature value" />
+            android:text="Feature Value" />
     </LinearLayout>
 
     <View

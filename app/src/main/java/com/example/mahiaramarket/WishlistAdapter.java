@@ -3,22 +3,29 @@ package com.example.mahiaramarket;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
 
 private List<WishlistModel>wishlistModelList;
-
-    public WishlistAdapter(List<WishlistModel> wishlistModelList) {
+private Boolean wishlist;
+private int lastPosition = -1;
+    public WishlistAdapter(List<WishlistModel> wishlistModelList,Boolean wishlist) {
         this.wishlistModelList = wishlistModelList;
+        this.wishlist = wishlist;
 
     }
 
@@ -32,17 +39,22 @@ private List<WishlistModel>wishlistModelList;
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-         int resource = wishlistModelList.get(position).getProductImage();
+        String productid = wishlistModelList.get(position).getProductid();
+         String resource = wishlistModelList.get(position).getProductImage();
          String title = wishlistModelList.get(position).getProductTitle();
-        int freeCoupens = wishlistModelList.get(position).getFreeCoupens();
+        long freeCoupens = wishlistModelList.get(position).getFreeCoupens();
         String rating = wishlistModelList.get(position).getRating();
-        int totalRating = wishlistModelList.get(position).getTotalRating();
+        long totalRating = wishlistModelList.get(position).getTotalRating();
         String productPrice = wishlistModelList.get(position).getProductPrice();
         String cuttedPrice = wishlistModelList.get(position).getCuttedPrice();
-        String paymentMethod = wishlistModelList.get(position).getPaymentMethod();
+        boolean paymentMethod = wishlistModelList.get(position).isCod();
 
-        holder.setData(resource,title,freeCoupens,rating,totalRating,productPrice,cuttedPrice,paymentMethod);
-
+        holder.setData(productid,resource,title,freeCoupens,rating,totalRating,productPrice,cuttedPrice,paymentMethod,position);
+        if (lastPosition < position) {
+            Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.fade_in);
+            holder.itemView.setAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -77,29 +89,55 @@ private List<WishlistModel>wishlistModelList;
             paymentMethod = itemView.findViewById(R.id.payment_method);
             deleteBtn = itemView.findViewById(R.id.delete_btn);
         }
-        private void setData(int resource, String title, int freeCoupensNo, String averagerate, int totatlRatingNo, String price, String cuttedprice, String paymethod){
-            productImage.setImageResource(resource);
+        private void setData(final String productid, String resource, String title, long freeCoupensNo, String averagerate, long totatlRatingNo, String price, String cuttedprice, boolean COD, final int index){
+            Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(productImage);
             productTitle.setText(title);
-            if(freeCoupensNo != 0){
+            if(freeCoupensNo != 0) {
                 coupenIcon.setVisibility(View.VISIBLE);
-                if(freeCoupensNo == 1) {
+                if (freeCoupensNo == 1) {
                     freeCoupen.setText("free " + freeCoupensNo + "coupen");
-                }else{
+                } else {
                     freeCoupen.setText("free " + freeCoupensNo + "coupens");
+
+                }
+            }else{
                     freeCoupen.setVisibility(View.INVISIBLE);
+                    coupenIcon.setVisibility(View.INVISIBLE);
                 }
                 rating.setText(averagerate);
-                totalRating.setText(totatlRatingNo +"(ratings)");
-                productPrice.setText(price);
-                cuttedPrice.setText(cuttedprice);
-                paymentMethod.setText(paymethod);
+                totalRating.setText("("+totatlRatingNo +")ratings");
+                productPrice.setText("Rs."+price+"/-");
+                cuttedPrice.setText("Rs."+cuttedprice+"/-");
+                if(COD) {
+                paymentMethod.setVisibility(View.VISIBLE);
+                }else {
+                    paymentMethod.setVisibility(View.INVISIBLE);
+                }
+
+                if(wishlist){
+                    deleteBtn.setVisibility(View.VISIBLE);
+                }else {
+                    deleteBtn.setVisibility(View.GONE);
+                }
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(itemView.getContext(), "Delete", Toast.LENGTH_SHORT).show();
+                        if( !ProductDetailsActivity.running_wishlist_query) {
+                            ProductDetailsActivity.running_wishlist_query = true;
+                            DBqueries.removeFromWishlist(index, itemView.getContext());
+                        }
+                    }
+                });
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent productDetailsIntent = new Intent(itemView.getContext(),ProductDetailsActivity.class);
+                        productDetailsIntent.putExtra("PRODUCT_ID",productid);
+                        itemView.getContext().startActivity(productDetailsIntent);
                     }
                 });
             }
         }
     }
-}
+

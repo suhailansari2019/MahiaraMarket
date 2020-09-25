@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="#B76E79"
     tools:context=".SignUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:padding="16dp"
-            android:src="@mipmap/close"
+            android:src="@mipmap/closed_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,8 +60,9 @@
             android:backgroundTint="#70ffffff"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name"
-            android:textColor="#70ffffff"
+            android:hint="Name"
+            android:textColorHint="#70ffffff"
+            android:textColor="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_up_email" />
@@ -122,6 +123,7 @@
             android:layout_height="25dp"
             android:layout_marginTop="16dp"
             android:text="or"
+            android:textColor="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_up_btn" />
@@ -132,6 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="Already Have an Account? Sign In!"
+            android:textColor="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

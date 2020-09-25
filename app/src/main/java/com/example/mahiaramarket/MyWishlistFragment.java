@@ -1,5 +1,6 @@
 package com.example.mahiaramarket;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,7 +35,8 @@ public class MyWishlistFragment extends Fragment {
     }
 
     private RecyclerView wishlistRecyclerview;
-
+private Dialog loadingDialog;
+public static WishlistAdapter wishlistAdapter;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -67,20 +69,28 @@ public class MyWishlistFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_wishlist, container, false);
+
+        //////Loading Dialog/////////
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+        ///////Loading Dialog/////////
+
         wishlistRecyclerview = view.findViewById(R.id.mywishlist_recyclercview);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         wishlistRecyclerview.setLayoutManager(linearLayoutManager);
-
-        List<WishlistModel>wishlistModelList = new ArrayList<>();
-        wishlistModelList.add(new WishlistModel(R.drawable.img_1,"Persnolized Necklace",1,"4",145,"Rs 999/-","Rs.1999/-","cash on delivery"));
-        wishlistModelList.add(new WishlistModel(R.drawable.img_1,"Persnolized Necklace",0,"3",145,"Rs 999/-","Rs.1999/-","cash on delivery"));
-        wishlistModelList.add(new WishlistModel(R.drawable.img_1,"Persnolized Necklace",2,"3",145,"Rs 999/-","Rs.1999/-","cash on delivery"));
-        wishlistModelList.add(new WishlistModel(R.drawable.img_1,"Persnolized Necklace",3,"2",145,"Rs 999/-","Rs.1999/-","cash on delivery"));
-        wishlistModelList.add(new WishlistModel(R.drawable.img_1,"Persnolized Necklace",0,"5",145,"Rs 999/-","Rs.1999/-","cash on delivery"));
-
-        WishlistAdapter wishlistAdapter = new WishlistAdapter(wishlistModelList);
+        if(DBqueries.wishlistModelList.size() == 0){
+            DBqueries.wishList.clear();
+            DBqueries.loadWishlist(getContext(), loadingDialog,true);
+        }else{
+            loadingDialog.dismiss();
+        }
+        wishlistAdapter = new WishlistAdapter(DBqueries.wishlistModelList,true);
         wishlistRecyclerview.setAdapter(wishlistAdapter);
         wishlistAdapter.notifyDataSetChanged();
 

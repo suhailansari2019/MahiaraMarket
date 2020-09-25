@@ -10,6 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.List;
 
 public class GridProductLayoutAdapter extends BaseAdapter {
@@ -22,7 +25,7 @@ public class GridProductLayoutAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return horizontalScrollProductModelList.size();
     }
 
     @Override
@@ -36,16 +39,17 @@ public class GridProductLayoutAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View converView, final ViewGroup viewGroup) {
+    public View getView(final int position, View converView, final ViewGroup viewGroup) {
         View view ;
         if(converView == null){
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.horizontal_scroll_item_layout, null);
            view.setElevation(0);
-            //view.setBackgroundColor(Color.parseColor("#ffffff"));
+            view.setBackgroundColor(Color.parseColor("#ffffff"));
  view.setOnClickListener(new View.OnClickListener() {
      @Override
      public void onClick(View view) {
          Intent productDetailsIntent = new Intent(viewGroup.getContext(),ProductDetailsActivity.class);
+         productDetailsIntent.putExtra("PRODUCT_ID",horizontalScrollProductModelList.get(position).getProductID());
          viewGroup.getContext().startActivity(productDetailsIntent);
      }
  });
@@ -54,11 +58,12 @@ public class GridProductLayoutAdapter extends BaseAdapter {
             TextView productTitle = view.findViewById(R.id.h_s_product_title);
             TextView productDescription = view.findViewById(R.id.h_s_product_description);
             TextView productPrice = view.findViewById(R.id.h_s_product_price);
-
-            productImage.setImageResource(horizontalScrollProductModelList.get(position).getProductImage());
+///////use glide here//////////
+            Glide.with(viewGroup.getContext()).load(horizontalScrollProductModelList.get(position).getProductImage()).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(productImage);
+///////use glide here//////////
             productTitle.setText(horizontalScrollProductModelList.get(position).getProductTitle());
             productDescription.setText(horizontalScrollProductModelList.get(position).getProductDescription());
-            productPrice.setText(horizontalScrollProductModelList.get(position).getProductPrice());
+            productPrice.setText("Rs."+horizontalScrollProductModelList.get(position).getProductPrice()+"/-");
 
         }else {
        view = converView;

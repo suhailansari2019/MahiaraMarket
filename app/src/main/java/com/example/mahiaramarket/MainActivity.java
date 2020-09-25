@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        SystemClock.sleep(3000);
+      SystemClock.sleep(3000);
 
     }
 

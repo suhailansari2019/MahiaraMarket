@@ -12,16 +12,27 @@ import java.util.List;
 
 public class MyRewardsAdapter extends RecyclerView.Adapter<MyRewardsAdapter.ViewHolder> {
 private List<RewardModel>rewardModelList;
+private Boolean useMiniLayout =false;
 
-    public MyRewardsAdapter(List<RewardModel> rewardModelList) {
+
+
+    public MyRewardsAdapter(List<RewardModel> rewardModelList,Boolean useMiniLayout) {
         this.rewardModelList = rewardModelList;
+        this.useMiniLayout = useMiniLayout;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rwards_item_layout,parent,false);
-        return new ViewHolder(view);
+        View view;
+        if(useMiniLayout){
+             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mini_rewards_item_layout, parent, false);
+        }else {
+
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rwards_item_layout, parent, false);
+        }
+            return new ViewHolder(view);
+
     }
 
     @Override
@@ -50,10 +61,22 @@ private List<RewardModel>rewardModelList;
             coupenExpiryDate = itemView.findViewById(R.id.coupen_validity);
             coupenBody = itemView.findViewById(R.id.coupen_body);
         }
-        private void setData(String title,String date,String body){
+        private void setData(final String title, final String date, final String body){
             coupenTitle.setText(title);
             coupenExpiryDate.setText(date);
             coupenBody.setText(body);
+
+            if(useMiniLayout){
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProductDetailsActivity.coupenTitle.setText(title);
+                        ProductDetailsActivity.coupenExpiryDate.setText(date);
+                        ProductDetailsActivity.coupenBody.setText(body);
+                        ProductDetailsActivity.showDialogRecyclerView();
+                    }
+                });
+            }
         }
     }
 }

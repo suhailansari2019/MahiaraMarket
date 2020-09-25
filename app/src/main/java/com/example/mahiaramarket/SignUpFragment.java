@@ -29,10 +29,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,6 +71,7 @@ private TextView alreadyHaveAnAccount;
     private ProgressBar progressBar;
      private FirebaseAuth firebaseAuth;
      private  String emailPattern ="[a-zA-Z0-9._-]+@[a-z]+.[a-z]+";
+     public static boolean disableCloseBtn = false;
     private FirebaseFirestore firebaseFirestore;
 
     /**
@@ -116,7 +120,11 @@ private TextView alreadyHaveAnAccount;
         progressBar = view.findViewById(R.id.sign_up_progressbar);
          firebaseAuth = FirebaseAuth.getInstance();
          firebaseFirestore = firebaseFirestore.getInstance();
-
+        if(disableCloseBtn){
+            closeBtn.setVisibility(View.GONE);
+        }else {
+            closeBtn.setVisibility(View.VISIBLE);
+        }
         return  view;
     }
 
@@ -255,31 +263,70 @@ private TextView alreadyHaveAnAccount;
                 signUpBtn.setEnabled(false);
                 signUpBtn.setTextColor(Color.argb(50f,255,255,255));
 
-
+////////firebase data////////////////
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(),password.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                if(task.isSuccessful()){
 
-                                   Map <Object,String> userdata = new HashMap<>();
+                                   Map <String ,Object> userdata = new HashMap<>();
                                    userdata.put("fullname",fullName.getText().toString());
 
-                                   firebaseFirestore.collection("USER")
-                                           .add(userdata)
-                                           .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                   firebaseFirestore.collection("USER").document(firebaseAuth.getUid())
+                                           .set(userdata)
+                                           .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                @Override
-                                               public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                    if(task.isSuccessful()){
-                                                       mainIntent();
-                                                    }else{
-                                                        progressBar.setVisibility(View.INVISIBLE);
-                                                        signUpBtn.setEnabled(true);
-                                                        signUpBtn.setTextColor(Color.argb(50f,255,255,255));
-                                                        String error =task.getException().getMessage();
-                                                        Toast.makeText(getActivity(),error,Toast.LENGTH_SHORT).show();
+                                               public void onComplete(@NonNull Task<Void> task) {
+                                                   if(task.isSuccessful()){
 
-                                                    }
+                                                       CollectionReference userDataReference = firebaseFirestore.collection("USER").document(firebaseAuth.getUid()).collection("USER_DATA");
+
+
+                                                       /////Maps/////////
+                                                       Map <String ,Object> wishlistMap = new HashMap<>();
+                                                       wishlistMap.put("list_size",(long)0);
+
+                                                       Map <String ,Object> ratingsMap = new HashMap<>();
+                                                       ratingsMap.put("list_size",(long)0);
+                                                       /////maps///////////////
+
+                                                       final List<String> documentNames = new ArrayList<>();
+                                                       documentNames.add("MY_WISHLIST");
+                                                       documentNames.add("MY_RATINGS");
+
+
+                                                       List<Map<String,Object>> documentFields = new ArrayList<>();
+                                                       documentFields.add(wishlistMap);
+                                                       documentFields.add(ratingsMap);
+
+                                                       for(int x = 0;x<documentNames.size();x++){
+
+                                                           final int finalX = x;
+                                                           userDataReference.document(documentNames.get(x))
+                                                                   .set(documentFields.get(x)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                               @Override
+                                                               public void onComplete(@NonNull Task<Void> task) {
+                                                                   if(task.isSuccessful()){
+                                                                       if(finalX == documentNames.size()-1) {
+                                                                           mainIntent();
+                                                                       }
+                                                                   }else {
+                                                                       progressBar.setVisibility(View.INVISIBLE);
+                                                                       signUpBtn.setEnabled(true);
+                                                                       signUpBtn.setTextColor(Color.argb(50f,255,255,255));
+                                                                       String error =task.getException().getMessage();
+                                                                       Toast.makeText(getActivity(),error,Toast.LENGTH_SHORT).show();
+
+                                                                   }
+                                                               }
+                                                           });
+                                                       }
+                                                   }else{
+                                                       String error =task.getException().getMessage();
+                                                       Toast.makeText(getActivity(),error,Toast.LENGTH_SHORT).show();
+
+                                                   }
                                                }
                                            });
 
@@ -300,9 +347,15 @@ private TextView alreadyHaveAnAccount;
                   email.setError("invalid mail Id");
         }
     }
+    ////////firebase data////////////////
     private  void mainIntent(){
-        Intent mainIntent = new Intent(getActivity(),HomeActivity2.class);
-        startActivity(mainIntent);
+        if(disableCloseBtn){
+            disableCloseBtn = false;
+
+        }else {
+            Intent mainIntent = new Intent(getActivity(), HomeActivity2.class);
+            startActivity(mainIntent);
+        }
         getActivity().finish();
     }
 }

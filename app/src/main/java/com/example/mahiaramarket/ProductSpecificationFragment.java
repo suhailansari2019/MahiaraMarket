@@ -33,6 +33,9 @@ public class ProductSpecificationFragment extends Fragment {
         // Required empty public constructor
     }
     private RecyclerView productSpecificationRecyclerView;
+    public List<ProductSpecificationModel> productSpecificationModelList;
+
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -72,27 +75,27 @@ public class ProductSpecificationFragment extends Fragment {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         productSpecificationRecyclerView.setLayoutManager(linearLayoutManager);
-        List<ProductSpecificationModel> productSpecificationModelList = new ArrayList<>();
-        productSpecificationModelList.add(new ProductSpecificationModel(0,"Product"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
-        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
-        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
-        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
-        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
+
+//        productSpecificationModelList.add(new ProductSpecificationModel(0,"Product"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(0,"new Product"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Colour","Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Style","Necklace"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Material","Plated Gold"));
+//        productSpecificationModelList.add(new ProductSpecificationModel(1,"Design","Customized"));
 
 
         ProductSpecificationAdapter productSpecificationAdapter = new ProductSpecificationAdapter(productSpecificationModelList);

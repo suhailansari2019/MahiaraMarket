@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.List;
 
 public class SliderAdapter extends PagerAdapter {
@@ -27,7 +30,9 @@ public class SliderAdapter extends PagerAdapter {
         ConstraintLayout bannerContainer =view.findViewById(R.id.banner_container);
         bannerContainer.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(sliderModelList.get(position).getBackgroundColor())));
         ImageView banner = view.findViewById(R.id.banner_slider);
-        banner.setImageResource(sliderModelList.get(position).getBanner());
+        /////glide//////
+        Glide.with(container.getContext()).load(sliderModelList.get(position).getBanner()).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(banner);
+        /////glide//////
         container.addView(view,0);
         return view;
     }

@@ -1,23 +1,33 @@
 package com.example.mahiaramarket;
 
 public class HorizontalScrollProductModel {
-    private int productImage;
+    private String productID;
+    private String productImage;
     private String productTitle;
     private String productDescription;
     private String productPrice;
 
-    public HorizontalScrollProductModel(int productImage, String productTitle, String productDescription, String productPrice) {
+    public HorizontalScrollProductModel(String productID ,String productImage, String productTitle, String productDescription, String productPrice) {
         this.productImage = productImage;
         this.productTitle = productTitle;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
+        this.productID = productID;
     }
 
-    public int getProductImage() {
+    public String getProductID() {
+        return productID;
+    }
+
+    public void setProductID(String productID) {
+        this.productID = productID;
+    }
+
+    public String  getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(int productImage) {
+    public void setProductImage(String productImage) {
         this.productImage = productImage;
     }
 

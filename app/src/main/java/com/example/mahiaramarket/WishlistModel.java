@@ -1,16 +1,18 @@
 package com.example.mahiaramarket;
 
 public class WishlistModel {
-    private int productImage;
+    private String productid;
+    private String productImage;
     private String productTitle;
-    private int freeCoupens;
+    private long freeCoupens;
     private String rating;
-    private int totalRating;
+    private long totalRating;
     private  String productPrice;
     private String cuttedPrice;
-    private   String paymentMethod;
+    private   boolean cod;
 
-    public WishlistModel(int productImage, String productTitle, int freeCoupens, String rating, int totalRating, String productPrice, String cuttedPrice, String paymentMethod) {
+    public WishlistModel(String productid,String productImage, String productTitle, long freeCoupens, String rating, long totalRating, String productPrice, String cuttedPrice, boolean cod) {
+       this.productid = productid;
         this.productImage = productImage;
         this.productTitle = productTitle;
         this.freeCoupens = freeCoupens;
@@ -18,14 +20,26 @@ public class WishlistModel {
         this.totalRating = totalRating;
         this.productPrice = productPrice;
         this.cuttedPrice = cuttedPrice;
-        this.paymentMethod = paymentMethod;
+        this.cod = cod;
     }
 
-    public int getProductImage() {
+    public String getProductid() {
+        return productid;
+    }
+
+    public void setProductid(String productid) {
+        this.productid = productid;
+    }
+
+    public WishlistModel(String toString) {
+
+    }
+
+    public String getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(int productImage) {
+    public void setProductImage(String productImage) {
         this.productImage = productImage;
     }
 
@@ -37,11 +51,11 @@ public class WishlistModel {
         this.productTitle = productTitle;
     }
 
-    public int getFreeCoupens() {
+    public long getFreeCoupens() {
         return freeCoupens;
     }
 
-    public void setFreeCoupens(int freeCoupens) {
+    public void setFreeCoupens(long freeCoupens) {
         this.freeCoupens = freeCoupens;
     }
 
@@ -53,11 +67,11 @@ public class WishlistModel {
         this.rating = rating;
     }
 
-    public int getTotalRating() {
+    public long getTotalRating() {
         return totalRating;
     }
 
-    public void setTotalRating(int totalRating) {
+    public void setTotalRating(long totalRating) {
         this.totalRating = totalRating;
     }
 
@@ -77,11 +91,11 @@ public class WishlistModel {
         this.cuttedPrice = cuttedPrice;
     }
 
-    public String getPaymentMethod() {
-        return paymentMethod;
+    public boolean isCod() {
+        return cod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setCod(boolean cod) {
+        this.cod = cod;
     }
 }

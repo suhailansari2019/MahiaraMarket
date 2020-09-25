@@ -80,7 +80,7 @@ public class MyRewardsFragment extends Fragment {
         rewardModelList.add(new RewardModel("Disscount","till 22th sep 2020","Get 10% Discount on Selected Necklace "));
         rewardModelList.add(new RewardModel("Buy Two at one price","till 20th sep 2020","Buy one get one free at one price "));
         rewardModelList.add(new RewardModel("Bank offer","till 30th sep 2020","Get 10% back with ICICI/SBI credit or Debit card payments. MAX-Cart Value more than Rs.5000/- "));
-        MyRewardsAdapter myRewardsAdapter = new MyRewardsAdapter(rewardModelList);
+        MyRewardsAdapter myRewardsAdapter = new MyRewardsAdapter(rewardModelList,false);
         rewardsRecyclerView.setAdapter(myRewardsAdapter);
         myRewardsAdapter.notifyDataSetChanged();
 
