@@ -238,9 +238,10 @@ swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener
     @SuppressLint("WrongConstant")
     private void reloadPage(){
         networkInfo = connectivityManager.getActiveNetworkInfo();
-        categoryModelList.clear();
-        list.clear();
-        loadedCategoriesNames.clear();
+//        categoryModelList.clear();
+//        list.clear();
+//        loadedCategoriesNames.clear();
+        DBqueries.clearData();
         if (networkInfo != null && networkInfo.isConnected() == true) {
             HomeActivity2.drawer.setDrawerLockMode(0);
             noInternetConnection.setVisibility(View.GONE);

@@ -19,12 +19,13 @@ import static com.example.mahiaramarket.MyAddressesActivity.refreshItem;
 public class AddressesAdapter extends RecyclerView.Adapter<AddressesAdapter.ViewHolder> {
     private List<AddressesModel> addressesModelList;
     private int MODE;
-    private int preSelectedPosition= -1;
+    private int preSelectedPosition;
 
 
     public AddressesAdapter(List<AddressesModel> addressesModelList, int MODE) {
         this.addressesModelList = addressesModelList;
         this.MODE = MODE;
+        preSelectedPosition = DBqueries.selectedAddress;
     }
 
     @NonNull
@@ -36,11 +37,13 @@ public class AddressesAdapter extends RecyclerView.Adapter<AddressesAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull AddressesAdapter.ViewHolder holder, int position) {
+
           String name = addressesModelList.get(position).getFullname();
-        String address = addressesModelList.get(position).getAddress();
+        String mobileNo = addressesModelList.get(position).getMobileNo();
+          String address = addressesModelList.get(position).getAddress();
         String pincode = addressesModelList.get(position).getPincode();
         Boolean selected = addressesModelList.get(position).getSelected();
-        holder.setData(name,address,pincode,selected,position);
+        holder.setData(name,address,pincode,selected,position,mobileNo);
     }
 
     @Override
@@ -63,8 +66,8 @@ public class AddressesAdapter extends RecyclerView.Adapter<AddressesAdapter.View
             optionContainer = itemView.findViewById(R.id.option_container);
 icon = itemView.findViewById(R.id.icon_view);
         }
-        private void setData(String username, String useraddress, String userpincode, Boolean selected, final int postition){
-            fullname.setText(username);
+        private void setData(String username, String useraddress, String userpincode, Boolean selected, final int postition,String mobileNo){
+            fullname.setText(username+" - "+mobileNo);
             address.setText(useraddress);
             pincode.setText(userpincode);
             if(MODE == SELECT_ADDRESS){
@@ -83,6 +86,7 @@ icon = itemView.findViewById(R.id.icon_view);
                             addressesModelList.get(preSelectedPosition).setSelected(false);
                             refreshItem(preSelectedPosition, postition);
                             preSelectedPosition = postition;
+                            DBqueries.selectedAddress = postition;
                         }
                     }
                 });

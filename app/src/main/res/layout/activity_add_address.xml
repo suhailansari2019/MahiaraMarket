@@ -104,15 +104,17 @@
                     android:hint="Pincode*"
                     android:inputType="number"
                     android:textColor="@color/colorPrimary" />
-                <EditText
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/state_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="State*"
-                    android:inputType="textPersonName"
+                   android:background="@drawable/border_background"
+                    android:backgroundTint="@color/recyclerViewBackground"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="16dp"
-                    android:textColor="@color/colorPrimary"/>
+                   />
 
             </LinearLayout>
 

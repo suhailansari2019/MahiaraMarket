@@ -1,5 +1,6 @@
 package com.example.mahiaramarket;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
@@ -48,8 +50,9 @@ private int lastPosition = -1;
         String productPrice = wishlistModelList.get(position).getProductPrice();
         String cuttedPrice = wishlistModelList.get(position).getCuttedPrice();
         boolean paymentMethod = wishlistModelList.get(position).isCod();
+        boolean inStock = wishlistModelList.get(position).isInStock();
 
-        holder.setData(productid,resource,title,freeCoupens,rating,totalRating,productPrice,cuttedPrice,paymentMethod,position);
+        holder.setData(productid,resource,title,freeCoupens,rating,totalRating,productPrice,cuttedPrice,paymentMethod,position,inStock);
         if (lastPosition < position) {
             Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.fade_in);
             holder.itemView.setAnimation(animation);
@@ -89,10 +92,10 @@ private int lastPosition = -1;
             paymentMethod = itemView.findViewById(R.id.payment_method);
             deleteBtn = itemView.findViewById(R.id.delete_btn);
         }
-        private void setData(final String productid, String resource, String title, long freeCoupensNo, String averagerate, long totatlRatingNo, String price, String cuttedprice, boolean COD, final int index){
+        private void setData(final String productid, String resource, String title, long freeCoupensNo, String averagerate, long totatlRatingNo, String price, String cuttedprice, boolean COD, final int index,boolean inStock){
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(productImage);
             productTitle.setText(title);
-            if(freeCoupensNo != 0) {
+            if(freeCoupensNo != 0 && inStock) {
                 coupenIcon.setVisibility(View.VISIBLE);
                 if (freeCoupensNo == 1) {
                     freeCoupen.setText("free " + freeCoupensNo + "coupen");
@@ -104,16 +107,33 @@ private int lastPosition = -1;
                     freeCoupen.setVisibility(View.INVISIBLE);
                     coupenIcon.setVisibility(View.INVISIBLE);
                 }
+            LinearLayout linearLayout = (LinearLayout) rating.getParent();
+            if(inStock){
+                rating.setVisibility(View.VISIBLE);
+                totalRating.setVisibility(View.VISIBLE);
+                productPrice.setTextColor(Color.parseColor("#000000"));
+                cuttedPrice.setVisibility(View.VISIBLE);
+                linearLayout.setVisibility(View.VISIBLE);
+
                 rating.setText(averagerate);
                 totalRating.setText("("+totatlRatingNo +")ratings");
                 productPrice.setText("Rs."+price+"/-");
                 cuttedPrice.setText("Rs."+cuttedprice+"/-");
                 if(COD) {
-                paymentMethod.setVisibility(View.VISIBLE);
+                    paymentMethod.setVisibility(View.VISIBLE);
                 }else {
                     paymentMethod.setVisibility(View.INVISIBLE);
                 }
+            }else {
 
+                linearLayout.setVisibility(View.INVISIBLE);
+                rating.setVisibility(View.INVISIBLE);
+                totalRating.setVisibility(View.INVISIBLE);
+                productPrice.setText("OUT OF STOCK");
+                productPrice.setTextColor(itemView.getContext().getResources().getColor(R.color.btnRed));
+                cuttedPrice.setVisibility(View.INVISIBLE);
+                paymentMethod.setVisibility(View.INVISIBLE);
+            }
                 if(wishlist){
                     deleteBtn.setVisibility(View.VISIBLE);
                 }else {

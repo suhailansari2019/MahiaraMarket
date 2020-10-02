@@ -1,5 +1,6 @@
 package com.example.mahiaramarket;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,7 +34,8 @@ public class MyRewardsFragment extends Fragment {
         // Required empty public constructor
     }
     private RecyclerView rewardsRecyclerView;
-
+    private Dialog loadingDialog;
+public static MyRewardsAdapter myRewardsAdapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -66,22 +68,31 @@ public class MyRewardsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_rewards, container, false);
+
+        //////Loading Dialog/////////
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+        ///////Loading Dialog/////////
+
         rewardsRecyclerView = view.findViewById(R.id.my_rewards_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rewardsRecyclerView.setLayoutManager(layoutManager);
-
-        List<RewardModel>rewardModelList = new ArrayList<>();
-        rewardModelList.add(new RewardModel("cashback","till 25th sep 2020","Get 10% back with credit or Debit card payments "));
-        rewardModelList.add(new RewardModel("Disscount","till 22th sep 2020","Get 10% Discount on Selected Necklace "));
-        rewardModelList.add(new RewardModel("Buy Two at one price","till 20th sep 2020","Buy one get one free at one price "));
-        rewardModelList.add(new RewardModel("Bank offer","till 30th sep 2020","Get 10% back with ICICI/SBI credit or Debit card payments. MAX-Cart Value more than Rs.5000/- "));
-        rewardModelList.add(new RewardModel("cashback","till 25th sep 2020","Get 10% back with credit or Debit card payments "));
-        rewardModelList.add(new RewardModel("Disscount","till 22th sep 2020","Get 10% Discount on Selected Necklace "));
-        rewardModelList.add(new RewardModel("Buy Two at one price","till 20th sep 2020","Buy one get one free at one price "));
-        rewardModelList.add(new RewardModel("Bank offer","till 30th sep 2020","Get 10% back with ICICI/SBI credit or Debit card payments. MAX-Cart Value more than Rs.5000/- "));
-        MyRewardsAdapter myRewardsAdapter = new MyRewardsAdapter(rewardModelList,false);
+        myRewardsAdapter = new MyRewardsAdapter(DBqueries.rewardModelList,false);
         rewardsRecyclerView.setAdapter(myRewardsAdapter);
+
+        if(DBqueries.rewardModelList.size() == 0){
+            DBqueries.loadRewards(getContext(),loadingDialog);
+        }else {
+            loadingDialog.dismiss();
+        }
+
+
+
         myRewardsAdapter.notifyDataSetChanged();
 
         return view;

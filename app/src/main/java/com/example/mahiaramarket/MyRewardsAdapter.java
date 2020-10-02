@@ -8,6 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MyRewardsAdapter extends RecyclerView.Adapter<MyRewardsAdapter.ViewHolder> {
@@ -37,10 +41,14 @@ private Boolean useMiniLayout =false;
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-          String title = rewardModelList.get(position).getTitle();
-          String date = rewardModelList.get(position).getExpiryDate();
+          String type = rewardModelList.get(position).getType();
+        Date validity = rewardModelList.get(position).getTimestamp();
           String body = rewardModelList.get(position).getCoupenBody();
-          holder.setData(title,date,body);
+          String lowerLimit = rewardModelList.get(position).getLowerLimit();
+        String upperLimit = rewardModelList.get(position).getUpperLimit();
+        String discORamt = rewardModelList.get(position).getdiscORamt();
+
+          holder.setData(type,validity,body,upperLimit,lowerLimit,discORamt);
     }
 
     @Override
@@ -61,17 +69,23 @@ private Boolean useMiniLayout =false;
             coupenExpiryDate = itemView.findViewById(R.id.coupen_validity);
             coupenBody = itemView.findViewById(R.id.coupen_body);
         }
-        private void setData(final String title, final String date, final String body){
-            coupenTitle.setText(title);
-            coupenExpiryDate.setText(date);
-            coupenBody.setText(body);
+        private void setData(final String type, final Date validity, final String body,String upperLimit,String lowerLimit,String discORamt){
+           if(type.equals("Discount")){
+               coupenTitle.setText(type);
+           }else {
+               coupenTitle.setText("Flate Rs. "+discORamt+" OFF");
+           }
+            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM YYYY");
+           coupenExpiryDate.setText("till " +simpleDateFormat.format(validity));
+
+           coupenBody.setText(body);
 
             if(useMiniLayout){
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ProductDetailsActivity.coupenTitle.setText(title);
-                        ProductDetailsActivity.coupenExpiryDate.setText(date);
+                        ProductDetailsActivity.coupenTitle.setText(type);
+                        ProductDetailsActivity.coupenExpiryDate.setText(simpleDateFormat.format(validity));
                         ProductDetailsActivity.coupenBody.setText(body);
                         ProductDetailsActivity.showDialogRecyclerView();
                     }
