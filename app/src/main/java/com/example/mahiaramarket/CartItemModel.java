@@ -32,8 +32,19 @@ public class CartItemModel {
   private boolean inStock;
   private List<String> qtyIDs;
   private boolean qtyError;
+  private String selectedCoupenId;
+  private String discountedPrice;
+  private boolean COD;
 
-    public CartItemModel(int type,String productID, String productImage, String productTitle, Long freeCoupens, String productPrice, String productCuttedPrice, Long productQuantity, Long offersApplied, Long coupensApplied,boolean inStock,Long productMaxQuantity,Long stockQuantity) {
+    public boolean isCOD() {
+        return COD;
+    }
+
+    public void setCOD(boolean COD) {
+        this.COD = COD;
+    }
+
+    public CartItemModel(boolean COD, int type, String productID, String productImage, String productTitle, Long freeCoupens, String productPrice, String productCuttedPrice, Long productQuantity, Long offersApplied, Long coupensApplied, boolean inStock, Long productMaxQuantity, Long stockQuantity) {
         this.type = type;
         this.productID = productID;
         this.productImage = productImage;
@@ -49,6 +60,23 @@ public class CartItemModel {
         this.stockQuantity = stockQuantity;
         qtyIDs = new ArrayList<>();
         qtyError = false;
+        this.COD = COD;
+    }
+
+    public String getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(String discountedPrice) {
+        this.discountedPrice = discountedPrice;
+    }
+
+    public String getSelectedCoupenId() {
+        return selectedCoupenId;
+    }
+
+    public void setSelectedCoupenId(String selectedCoupenId) {
+        this.selectedCoupenId = selectedCoupenId;
     }
 
     public boolean isQtyError() {
@@ -167,8 +195,50 @@ public class CartItemModel {
 
     ////////// cart total //////////
 
+    private int totalItems,totalItemPrice,totalAmount,savedAmount;
+    private String deliveryPrice;
     public CartItemModel(int type) {
         this.type = type;
+    }
+
+    public int getTotalItems() {
+        return totalItems;
+    }
+
+    public void setTotalItems(int totalItems) {
+        this.totalItems = totalItems;
+    }
+
+    public int getTotalItemPrice() {
+        return totalItemPrice;
+    }
+
+    public void setTotalItemPrice(int totalItemPrice) {
+        this.totalItemPrice = totalItemPrice;
+    }
+
+    public int getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public int getSavedAmount() {
+        return savedAmount;
+    }
+
+    public void setSavedAmount(int savedAmount) {
+        this.savedAmount = savedAmount;
+    }
+
+    public String getDeliveryPrice() {
+        return deliveryPrice;
+    }
+
+    public void setDeliveryPrice(String deliveryPrice) {
+        this.deliveryPrice = deliveryPrice;
     }
     ////////// cart total //////////
 

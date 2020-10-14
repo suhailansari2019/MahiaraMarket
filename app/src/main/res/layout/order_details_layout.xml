@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:elevation="3dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:background="@color/white"
+    android:elevation="3dp">
 
     <ImageView
         android:id="@+id/productImage"
@@ -27,8 +26,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Persnolized Necklace (Gold)"
-        android:textSize="16sp"
         android:textColor="#000000"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,8 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="RS. 999/-"
-        android:textSize="20sp"
         android:textColor="#000000"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/productImage"
         app:layout_constraintStart_toStartOf="parent" />
@@ -49,11 +48,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="Qty:1"
-        android:textColor="#000000"
         android:background="@drawable/border_background"
         android:backgroundTint="#000000"
         android:padding="3dp"
+        android:text="Qty:1"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="@+id/productImage"
         app:layout_constraintEnd_toStartOf="@+id/productImage" />
 
@@ -78,14 +77,14 @@
         app:srcCompat="@drawable/dot_selector" />
 
     <ProgressBar
-        android:id="@+id/order_paked_progress"
+        android:id="@+id/order_packed_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="60dp"
         android:layout_height="3dp"
         android:layout_marginStart="9dp"
         android:layout_marginTop="8dp"
-        android:progress="100"
-        android:progressTint="#6d6d6d"
+        android:progress="0"
+        android:progressTint="@color/successesGreen"
         android:rotation="90"
         android:transformPivotX="0dp"
         app:layout_constraintStart_toStartOf="@+id/order_Indicator"
@@ -102,14 +101,14 @@
         app:srcCompat="@drawable/dot_selector" />
 
     <ProgressBar
-        android:id="@+id/paked_shipping_progress"
+        android:id="@+id/packed_shipping_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="60dp"
         android:layout_height="3dp"
         android:layout_marginStart="9dp"
         android:layout_marginTop="8dp"
-        android:progress="100"
-        android:progressTint="#6d6d6d"
+        android:progress="0"
+        android:progressTint="@color/successesGreen"
         android:rotation="90"
         android:transformPivotX="0dp"
         app:layout_constraintStart_toStartOf="@+id/packed_indicator"
@@ -126,13 +125,13 @@
         app:srcCompat="@drawable/dot_selector" />
 
     <ProgressBar
-        android:id="@+id/shipping_delivered_ptogress"
+        android:id="@+id/shipping_delivered_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="60dp"
         android:layout_height="3dp"
         android:layout_marginStart="9dp"
-        android:progress="100"
-        android:progressTint="#6d6d6d"
+        android:progress="0"
+        android:progressTint="@color/successesGreen"
         android:rotation="90"
         android:transformPivotX="0dp"
         app:layout_constraintStart_toStartOf="@+id/shipping_indicator"
@@ -154,8 +153,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Order"
-        android:textSize="12sp"
         android:textColor="#000000"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/order_Indicator"
         app:layout_constraintStart_toEndOf="@+id/order_Indicator"
         app:layout_constraintTop_toTopOf="@+id/order_Indicator" />
@@ -177,8 +176,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Your Order Has been Placed"
-        android:textSize="10sp"
         android:textColor="#000000"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/order_title"
         app:layout_constraintTop_toBottomOf="@+id/order_title" />
 
@@ -206,13 +205,13 @@
         app:layout_constraintTop_toTopOf="@+id/packed_title" />
 
     <TextView
-        android:id="@+id/paked_body"
+        android:id="@+id/packed_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Your Order Has been Packed"
-        android:textSize="10sp"
         android:textColor="#000000"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/packed_title"
         app:layout_constraintTop_toBottomOf="@+id/packed_title" />
 
@@ -222,8 +221,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Shipping"
-        android:textSize="12sp"
         android:textColor="#000000"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/shipping_indicator"
         app:layout_constraintStart_toEndOf="@+id/shipping_indicator"
         app:layout_constraintTop_toTopOf="@+id/shipping_indicator" />
@@ -245,8 +244,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Your Order has been shipped"
-        android:textSize="10sp"
         android:textColor="#000000"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/shipping_title"
         app:layout_constraintTop_toBottomOf="@+id/shipping_title" />
 
@@ -256,8 +255,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="delivered"
-        android:textSize="12sp"
         android:textColor="#000000"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/delivered_Indicator"
         app:layout_constraintStart_toEndOf="@+id/delivered_Indicator"
         app:layout_constraintTop_toTopOf="@+id/delivered_Indicator" />
@@ -279,8 +278,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Your Order Delivered Successfully!"
-        android:textSize="10sp"
         android:textColor="#000000"
+        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/delivered_title"
         app:layout_constraintTop_toBottomOf="@+id/delivered_title" />
 
@@ -291,9 +290,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView35">
@@ -358,7 +355,7 @@
         android:id="@+id/divider8"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -375,5 +372,25 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider8" />
+
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:stateListAnimator="@null"
+        android:text="Cancel Order"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rate_now_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

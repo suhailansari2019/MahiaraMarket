@@ -11,14 +11,34 @@ public class RewardModel {
     private String discORamt;
     private String coupenBody;
     private Date timestamp;
+    private Boolean alreadyUsed;
+    private String coupenId;
 
-    public RewardModel(String type, String lowerLimit, String upperLimit, String discORamt, String coupenBody, Date timestamp) {
+    public RewardModel(String coupenId, String type, String lowerLimit, String upperLimit, String discORamt, String coupenBody, Date timestamp,Boolean alreadyUsed) {
         this.type = type;
         this.lowerLimit = lowerLimit;
         this.upperLimit = upperLimit;
         this.discORamt = discORamt;
         this.coupenBody = coupenBody;
         this.timestamp = timestamp;
+        this.alreadyUsed = alreadyUsed;
+        this.coupenId = coupenId;
+    }
+
+    public String getCoupenId() {
+        return coupenId;
+    }
+
+    public void setCoupenId(String coupenId) {
+        this.coupenId = coupenId;
+    }
+
+    public Boolean getAlreadyUsed() {
+        return alreadyUsed;
+    }
+
+    public void setAlreadyUsed(Boolean alreadyUsed) {
+        this.alreadyUsed = alreadyUsed;
     }
 
     public String getType() {

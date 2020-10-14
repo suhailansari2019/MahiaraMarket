@@ -2,10 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 <item>
     <shape>
-        <solid android:color="#E6BE8A"/>
+        <solid android:color="#ff602e"/>
     </shape>
 </item>
     <item>
-        <bitmap android:src="@mipmap/logo_square"/>
+        <bitmap android:src="@mipmap/logo_square" android:gravity="center"/>
     </item>
 </layer-list>

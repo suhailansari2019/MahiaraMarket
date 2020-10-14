@@ -93,8 +93,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="Offers Applied"
-        android:textSize="12sp"
         android:textColor="@color/successesGreen"
+        android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/product_price" />
 
@@ -106,6 +107,7 @@
         android:text="Coupens Applied"
         android:textColor="@color/colorPrimary"
         android:textSize="12sp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/offers_applied" />
 
@@ -130,9 +132,9 @@
     <LinearLayout
         android:id="@+id/coupen_redemption_layout"
         android:layout_width="0dp"
-        android:layout_height="62dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="#FF3030"
+        android:background="@color/coupenRed"
         android:gravity="right"
         android:orientation="horizontal"
         android:padding="16dp"
@@ -143,9 +145,9 @@
         <TextView
             android:id="@+id/tv_coupen_redeemption"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Check Price After Redeemed Coupon"
+            android:text="Apply Your Coupen here."
             android:textAlignment="center"
             android:textColor="#ffffff" />
 
@@ -181,4 +183,14 @@
     android:drawableStart="@mipmap/remove_icon"
     android:drawablePadding="4dp"
     />   </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cod_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_free_coupen"
+        app:layout_constraintStart_toEndOf="@+id/tv_free_coupen"
+        app:layout_constraintTop_toTopOf="@+id/tv_free_coupen"
+        app:srcCompat="@drawable/cod" />
 </androidx.constraintlayout.widget.ConstraintLayout>

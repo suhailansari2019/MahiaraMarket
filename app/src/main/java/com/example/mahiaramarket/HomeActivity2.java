@@ -22,15 +22,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.content.Intent;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.mahiaramarket.ui.home.HomeFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -44,6 +50,8 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.mahiaramarket.R.id.imageView;
 import static com.example.mahiaramarket.R.id.nav_my_mall;
@@ -76,6 +84,9 @@ public class HomeActivity2 extends AppCompatActivity implements NavigationView.O
     private TextView badgeCount;
     private int scrollFlags;
     private AppBarLayout.LayoutParams params;
+    private CircleImageView profileView;
+    private TextView fullname,email;
+    private ImageView addProfileIcon;
 
     public static DrawerLayout drawer;
     @SuppressLint("WrongConstant")
@@ -110,6 +121,13 @@ scrollFlags = params.getScrollFlags();
         navigationView.getMenu().getItem(0).setChecked(true);
 
         frameLayout = findViewById(R.id.main_framelayout);
+
+        profileView = navigationView.getHeaderView(0).findViewById(R.id.main_profile_image);
+        fullname = navigationView.getHeaderView(0).findViewById(R.id.main_fullname);
+        email = navigationView.getHeaderView(0).findViewById(R.id.main_email);
+        addProfileIcon = navigationView.getHeaderView(0).findViewById(R.id.add_profile_icon);
+
+
 
         if (showCart) {
             homeActivity2 = this;
@@ -168,6 +186,46 @@ scrollFlags = params.getScrollFlags();
             navigationView.getMenu().getItem(navigationView.getMenu().size()-1).setEnabled(false);
 
         }else{
+
+            if(DBqueries.email == null) {
+                FirebaseFirestore.getInstance().collection("USER").document(currentUser.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DBqueries.fullname = task.getResult().getString("fullname");
+                            DBqueries.email = task.getResult().getString("email");
+                            DBqueries.profile = task.getResult().getString("profile");
+
+                            fullname.setText(DBqueries.fullname);
+                            email.setText(DBqueries.email);
+                            if (DBqueries.profile.equals("")) {
+
+                                addProfileIcon.setVisibility(View.VISIBLE);
+
+                            } else {
+                                Glide.with(HomeActivity2.this).load(DBqueries.profile).apply(new RequestOptions().placeholder(R.mipmap.dummyimage)).into(profileView);
+                                addProfileIcon.setVisibility(View.INVISIBLE);
+                            }
+
+                        } else {
+                            String error = task.getException().getMessage();
+                            Toast.makeText(HomeActivity2.this, error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }else {
+                fullname.setText(DBqueries.fullname);
+                email.setText(DBqueries.email);
+                if (DBqueries.profile.equals("")) {
+                    profileView.setImageResource(R.mipmap.dummyimage);
+                    addProfileIcon.setVisibility(View.VISIBLE);
+
+                } else {
+                    Glide.with(HomeActivity2.this).load(DBqueries.profile).apply(new RequestOptions().placeholder(R.mipmap.dummyimage)).into(profileView);
+                    addProfileIcon.setVisibility(View.INVISIBLE);
+                }
+            }
             navigationView.getMenu().getItem(navigationView.getMenu().size()-1).setEnabled(true);
         }
         if(resetHomeActivity2){
@@ -177,6 +235,12 @@ scrollFlags = params.getScrollFlags();
             navigationView.getMenu().getItem(0).setChecked(true);
         }
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DBqueries.checkNotification(true,null);
     }
 
     @Override
@@ -241,6 +305,25 @@ public void onBackPressed(){
                         }
                     }
                 });
+
+            MenuItem notifyItem = menu.findItem(R.id.main_notification_icon);
+            notifyItem.setActionView(R.layout.badge_layout);
+            ImageView notifyIcon = notifyItem.getActionView().findViewById(R.id.badge_icon);
+            notifyIcon.setImageResource(R.mipmap.notification);
+            TextView notifyCount = notifyItem.getActionView().findViewById(R.id.badge_count);
+            if(currentUser != null){
+                ///////////notification Method////
+                DBqueries.checkNotification(false,notifyCount);
+                ///////////notification Method////
+
+            }
+            notifyItem.getActionView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent notificationIntent = new Intent(HomeActivity2.this,NotificationActivity.class);
+                    startActivity(notificationIntent);
+                }
+            });
         }
 
         return true;
@@ -252,10 +335,12 @@ public void onBackPressed(){
         int id = item.getItemId();
 
         if (id == R.id.main_search_icon) {
-            //todo:serach
+            Intent searchIntent = new Intent(this,SearchActivity.class);
+            startActivity(searchIntent);
             return true;
         } else if (id == R.id.main_notification_icon) {
-            //todo:notification
+            Intent notificationIntent = new Intent(this,NotificationActivity.class);
+            startActivity(notificationIntent);
             return true;
         } else if (id == R.id.main_cart_icon) {
             if(currentUser == null) {
@@ -304,7 +389,7 @@ public void onBackPressed(){
 MenuItem menuItem;
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         menuItem = item;
 
@@ -339,6 +424,7 @@ MenuItem menuItem;
                         finish();
 
                     }
+                    drawer.removeDrawerListener(this);
                 }
             });
 

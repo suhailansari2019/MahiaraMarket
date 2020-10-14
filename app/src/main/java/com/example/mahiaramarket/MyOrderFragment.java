@@ -1,5 +1,6 @@
 package com.example.mahiaramarket;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,8 @@ public class MyOrderFragment extends Fragment {
         // Required empty public constructor
     }
     private RecyclerView myOrderRecyclerView;
+    public static MyOrderAdapter myOrderAdapter;
+    private Dialog loadingDialog;
 
     /**
      * Use this factory method to create a new instance of
@@ -67,20 +70,35 @@ public class MyOrderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_order, container, false);
+
+        //////Loading Dialog/////////
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+        ///////Loading Dialog/////////
+
+
         myOrderRecyclerView = view.findViewById(R.id.my_orders_recycler_view);
+
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         myOrderRecyclerView.setLayoutManager(layoutManager);
 
-        List<MyOrderItemModel>myOrderItemModelList = new ArrayList<>();
-        myOrderItemModelList.add(new MyOrderItemModel(R.drawable.img_1,2,"Persnolized Necklace","Delivered On Monady 21th Sep 2020"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.drawable.img_2,3,"Persnolized Necklace","Cancelled"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.drawable.img_3,1,"Persnolized Necklace","Delivered On Monady 21th Sep 2020"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.drawable.img_4,4,"Persnolized Necklace","Cancelled"));
-
-        MyOrderAdapter myOrderAdapter = new MyOrderAdapter(myOrderItemModelList);
+        myOrderAdapter = new MyOrderAdapter(DBqueries.myOrderItemModelList,loadingDialog);
         myOrderRecyclerView.setAdapter(myOrderAdapter);
-        myOrderAdapter.notifyDataSetChanged();
+
+            DBqueries.loadOrders(getContext(),myOrderAdapter,loadingDialog);
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        myOrderAdapter.notifyDataSetChanged();
     }
 }

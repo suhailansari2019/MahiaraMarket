@@ -272,6 +272,8 @@ private TextView alreadyHaveAnAccount;
 
                                    Map <String ,Object> userdata = new HashMap<>();
                                    userdata.put("fullname",fullName.getText().toString());
+                                   userdata.put("email",email.getText().toString());
+                                   userdata.put("profile","");
 
                                    firebaseFirestore.collection("USER").document(firebaseAuth.getUid())
                                            .set(userdata)
@@ -296,6 +298,9 @@ private TextView alreadyHaveAnAccount;
                                                        Map <String ,Object> myAddressesMap = new HashMap<>();
                                                        myAddressesMap.put("list_size",(long)0);
 
+                                                       Map <String ,Object> notificationMap = new HashMap<>();
+                                                       notificationMap.put("list_size",(long)0);
+
                                                        /////maps///////////////
 
                                                        final List<String> documentNames = new ArrayList<>();
@@ -303,6 +308,7 @@ private TextView alreadyHaveAnAccount;
                                                        documentNames.add("MY_RATINGS");
                                                        documentNames.add("MY_CART");
                                                        documentNames.add("MY_ADDRESSES");
+                                                       documentNames.add("MY_NOTIFICATION");
 
 
                                                        List<Map<String,Object>> documentFields = new ArrayList<>();
@@ -310,6 +316,7 @@ private TextView alreadyHaveAnAccount;
                                                        documentFields.add(ratingsMap);
                                                        documentFields.add(cartMap);
                                                        documentFields.add(myAddressesMap);
+                                                       documentFields.add(notificationMap);
 
                                                        for(int x = 0;x<documentNames.size();x++){
 

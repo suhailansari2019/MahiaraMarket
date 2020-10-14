@@ -1,5 +1,6 @@
 package com.example.mahiaramarket;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -18,6 +19,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,8 +61,39 @@ public class OTPverificationActivity extends AppCompatActivity {
                     public void onClick(View view) {
 
                         if(otp.getText().toString().equals(String.valueOf(OTP_number))){
-                            DeliveryActivity.codOrderConfirm = true;
-                            finish();
+
+                            Map<String,Object> updateStatus = new HashMap<>();
+                            updateStatus.put("Order Status","Ordered");
+                            final String OrderID = getIntent().getStringExtra("OrderID");
+                            FirebaseFirestore.getInstance().collection("ORDERS").document(OrderID).update(updateStatus)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Map<String,Object>userOrder =new HashMap<>();
+                                                userOrder.put("order_id",OrderID);
+                                                userOrder.put("time", FieldValue.serverTimestamp());
+                                                FirebaseFirestore.getInstance().collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_ORDER").document(OrderID).set(userOrder)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    /////confirmation layout code
+                                                                    DeliveryActivity.codOrderConfirm = true;
+                                                                    finish();
+                                                                    /////confirmation layout code
+                                                                }else {
+                                                                    Toast.makeText(OTPverificationActivity.this, "failed to update user's Order List", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                            }else {
+                                                Toast.makeText(OTPverificationActivity.this, "Order Cancelled", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+
+
                         }else {
                             Toast.makeText(OTPverificationActivity.this, "Incorrect Otp Please check!", Toast.LENGTH_SHORT).show();
                         }

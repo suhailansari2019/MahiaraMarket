@@ -52,6 +52,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
     public static boolean running_cart_query = false;
     public static Activity productDetailsActivity;
 
+    public static boolean fromSearch = false;
+
 
     private ViewPager productImagesViewPager;
     private TabLayout viewPagerIndicator;
@@ -63,6 +65,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private TextView averageRatingMiniView;
     private TextView totalRatingMiniView;
     private TextView productPrice;
+    private String productOriginalPrice;
     private TextView cuttedPrice;
     private ImageView codIndicator;
     private TextView tvCodIndicator;
@@ -102,17 +105,19 @@ public class ProductDetailsActivity extends AppCompatActivity {
     public static FloatingActionButton addToWishlistbtn;
 
     /////////coupenDialog//////////////
-    public static TextView coupenTitle;
-    public static TextView coupenExpiryDate;
-    public static TextView coupenBody;
-    private static RecyclerView coupensRecyclerView;
-    private static LinearLayout selectedCoupen;
+    private TextView coupenTitle;
+    private TextView coupenExpiryDate;
+    private TextView coupenBody;
+    private RecyclerView coupensRecyclerView;
+    private LinearLayout selectedCoupen;
+    private TextView discountedPrice;
+    private TextView originalPrice;
 
 
     /////////coupenDialog//////////////
 private TextView badgeCount;
 
-private boolean inStock;
+private boolean inStock = false;
     ///////Sign In dialog///////
     private Dialog signInDialog;
     private Dialog loadingDialog;
@@ -171,6 +176,38 @@ private boolean inStock;
         loadingDialog.show();
         ///////Loading Dialog/////////
 
+
+        ////////Coupen Dialog /////////////
+        final Dialog checkCoupenPriceDialog = new Dialog(ProductDetailsActivity.this);
+        checkCoupenPriceDialog.setContentView(R.layout.coupen_redeem_dialog);
+        checkCoupenPriceDialog.setCancelable(true);
+        checkCoupenPriceDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        ImageView toggleRecyclerView = checkCoupenPriceDialog.findViewById(R.id.toggle_recyclerView);
+        coupensRecyclerView = checkCoupenPriceDialog.findViewById(R.id.coupen_recyclerView);
+        selectedCoupen = checkCoupenPriceDialog.findViewById(R.id.selected_coupen);
+        coupenTitle = checkCoupenPriceDialog.findViewById(R.id.coupen_title);
+        coupenExpiryDate = checkCoupenPriceDialog.findViewById(R.id.coupen_validity);
+        coupenBody = checkCoupenPriceDialog.findViewById(R.id.coupen_body);
+
+
+        originalPrice = checkCoupenPriceDialog.findViewById(R.id.original_price);
+        discountedPrice = checkCoupenPriceDialog.findViewById(R.id.dicounted_price);
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(ProductDetailsActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        coupensRecyclerView.setLayoutManager(layoutManager);
+
+
+        toggleRecyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogRecyclerView();
+            }
+        });
+        //////////coupen Dialog end/////////
+
         ///////////////////firebase Query///////////////////
         firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -200,6 +237,15 @@ private boolean inStock;
                                         averageRatingMiniView.setText(documentSnapshot.get("average_rating").toString());
                                         totalRatingMiniView.setText("(" + (long) documentSnapshot.get("total_rating") + "ratings");
                                         productPrice.setText("Rs." + documentSnapshot.get("product_price") + "/-");
+
+                                        /////for coupen dialog/////
+                                        originalPrice.setText(productPrice.getText());
+                                        productOriginalPrice = documentSnapshot.get("product_price").toString();
+                                        MyRewardsAdapter myRewardsAdapter = new MyRewardsAdapter(DBqueries.rewardModelList, true,coupensRecyclerView,selectedCoupen,productOriginalPrice,coupenTitle,coupenExpiryDate,coupenBody,discountedPrice);
+                                        coupensRecyclerView.setAdapter(myRewardsAdapter);
+                                        myRewardsAdapter.notifyDataSetChanged();
+                                        /////for coupen dialog/////
+
                                         cuttedPrice.setText("Rs." + documentSnapshot.get("cutted_price") + "/-");
                                         if ((boolean) documentSnapshot.get("COD")) {
                                             codIndicator.setVisibility(View.VISIBLE);
@@ -253,7 +299,11 @@ private boolean inStock;
                                             }
                                             if (DBqueries.wishList.size() == 0) {
                                                 DBqueries.loadWishlist(ProductDetailsActivity.this, loadingDialog, false);
-                                            } else {
+                                            }
+                                            if(DBqueries.rewardModelList.size() == 0){
+                                                DBqueries.loadRewards(ProductDetailsActivity.this,loadingDialog,false);
+                                            }
+                                            if(DBqueries.cartList.size() != 0 && DBqueries.wishList.size() != 0 && DBqueries.rewardModelList.size() != 0){
                                                 loadingDialog.dismiss();
                                             }
 
@@ -285,6 +335,7 @@ private boolean inStock;
 
                                         if(task.getResult().getDocuments().size()<(long)documentSnapshot.get("stock_quantity")){
                                             inStock = true;
+                                            buyNowBtn.setVisibility(View.VISIBLE);
                                             addToCartBtn.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
@@ -310,13 +361,13 @@ private boolean inStock;
 
                                                                             if (DBqueries.cartItemModelList.size() != 0) {
 
-                                                                                DBqueries.cartItemModelList.add(0,new CartItemModel(CartItemModel.CART_ITEM, productID, documentSnapshot.get("product_image_1").toString()
+                                                                                DBqueries.cartItemModelList.add(0,new CartItemModel(documentSnapshot.getBoolean("COD"),CartItemModel.CART_ITEM, productID, documentSnapshot.get("product_image_1").toString()
                                                                                         , documentSnapshot.get("product_title").toString()
                                                                                         , (long) documentSnapshot.get("free_coupens")
                                                                                         , documentSnapshot.get("product_price").toString()
                                                                                         , documentSnapshot.get("cutted_price").toString()
                                                                                         , (long) 1
-                                                                                        , (long) 0
+                                                                                        , (long) documentSnapshot.get("offers_applied")
                                                                                         , (long) 0
                                                                                         ,inStock
                                                                                         ,(long)documentSnapshot.get("max-quantity")
@@ -576,13 +627,13 @@ private boolean inStock;
                     loadingDialog.show();
                     productDetailsActivity = ProductDetailsActivity.this;
                     DeliveryActivity.cartItemModelList = new ArrayList<>();
-                    DeliveryActivity.cartItemModelList.add(new CartItemModel(CartItemModel.CART_ITEM, productID, documentSnapshot.get("product_image_1").toString()
+                    DeliveryActivity.cartItemModelList.add(new CartItemModel(documentSnapshot.getBoolean("COD"),CartItemModel.CART_ITEM, productID, documentSnapshot.get("product_image_1").toString()
                             , documentSnapshot.get("product_title").toString()
                             , (long) documentSnapshot.get("free_coupens")
                             , documentSnapshot.get("product_price").toString()
                             , documentSnapshot.get("cutted_price").toString()
                             , (long) 1
-                            , (long) 0
+                            , (long) documentSnapshot.get("offers_applied")
                             , (long) 0
                             ,inStock,
                             (long)documentSnapshot.get("max-quantity")
@@ -592,7 +643,7 @@ private boolean inStock;
 
 
                     if(DBqueries.addressesModelList.size() == 0) {
-                        DBqueries.loadAddresses(ProductDetailsActivity.this, loadingDialog);
+                        DBqueries.loadAddresses(ProductDetailsActivity.this, loadingDialog,true);
                     }else{
                         loadingDialog.dismiss();
                         Intent deliveryIntent = new Intent(ProductDetailsActivity.this, DeliveryActivity.class);
@@ -602,48 +653,7 @@ private boolean inStock;
             }
         });
 
-        ////////Coupen Dialog /////////////
-        final Dialog checkCoupenPriceDialog = new Dialog(ProductDetailsActivity.this);
-        checkCoupenPriceDialog.setContentView(R.layout.coupen_redeem_dialog);
-        checkCoupenPriceDialog.setCancelable(true);
-        checkCoupenPriceDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        ImageView toggleRecyclerView = checkCoupenPriceDialog.findViewById(R.id.toggle_recyclerView);
-        coupensRecyclerView = checkCoupenPriceDialog.findViewById(R.id.coupen_recyclerView);
-        selectedCoupen = checkCoupenPriceDialog.findViewById(R.id.selected_coupen);
-        coupenTitle = checkCoupenPriceDialog.findViewById(R.id.coupen_title);
-        coupenExpiryDate = checkCoupenPriceDialog.findViewById(R.id.coupen_validity);
-        coupenBody = checkCoupenPriceDialog.findViewById(R.id.coupen_body);
-
-
-        TextView originalPrice = checkCoupenPriceDialog.findViewById(R.id.original_price);
-        TextView discountedPrice = checkCoupenPriceDialog.findViewById(R.id.dicounted_price);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(ProductDetailsActivity.this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        coupensRecyclerView.setLayoutManager(layoutManager);
-
-//        List<RewardModel> rewardModelList = new ArrayList<>();
-//        rewardModelList.add(new RewardModel("cashback", "till 25th sep 2020", "Get 10% back with credit or Debit card payments "));
-//        rewardModelList.add(new RewardModel("Disscount", "till 22th sep 2020", "Get 10% Discount on Selected Necklace "));
-//        rewardModelList.add(new RewardModel("Buy Two at one price", "till 20th sep 2020", "Buy one get one free at one price "));
-//        rewardModelList.add(new RewardModel("Bank offer", "till 30th sep 2020", "Get 10% back with ICICI/SBI credit or Debit card payments. MAX-Cart Value more than Rs.5000/- "));
-//        rewardModelList.add(new RewardModel("cashback", "till 25th sep 2020", "Get 10% back with credit or Debit card payments "));
-//        rewardModelList.add(new RewardModel("Disscount", "till 22th sep 2020", "Get 10% Discount on Selected Necklace "));
-//        rewardModelList.add(new RewardModel("Buy Two at one price", "till 20th sep 2020", "Buy one get one free at one price "));
-//        rewardModelList.add(new RewardModel("Bank offer", "till 30th sep 2020", "Get 10% back with ICICI/SBI credit or Debit card payments. MAX-Cart Value more than Rs.5000/- "));
-
-//        MyRewardsAdapter myRewardsAdapter = new MyRewardsAdapter(rewardModelList, true);
-//        coupensRecyclerView.setAdapter(myRewardsAdapter);
-//        myRewardsAdapter.notifyDataSetChanged();
-
-        toggleRecyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogRecyclerView();
-            }
-        });
-        //////////coupen Dialog end/////////
 
         coupenRedeemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -703,8 +713,11 @@ private boolean inStock;
             }
             if (DBqueries.wishList.size() == 0) {
                 DBqueries.loadWishlist(ProductDetailsActivity.this, loadingDialog, false);
-
-            } else {
+            }
+            if(DBqueries.rewardModelList.size() == 0){
+                DBqueries.loadRewards(ProductDetailsActivity.this,loadingDialog,false);
+            }
+            if(DBqueries.cartList.size() != 0 && DBqueries.wishList.size() != 0 && DBqueries.rewardModelList.size() != 0){
                 loadingDialog.dismiss();
             }
 
@@ -733,7 +746,7 @@ private boolean inStock;
         invalidateOptionsMenu();
     }
 
-    public static void showDialogRecyclerView() {
+    private void showDialogRecyclerView() {
         if (coupensRecyclerView.getVisibility() == View.GONE) {
             coupensRecyclerView.setVisibility(View.VISIBLE);
             selectedCoupen.setVisibility(View.GONE);
@@ -816,11 +829,15 @@ private boolean inStock;
 
         if (id == android.R.id.home) {
             productDetailsActivity = null;
-            //todo:serach
             finish();
             return true;
-        } else if (id == R.id.main_search_icon) {
-            //todo:notification
+        } else if (id == R.id.main_search_icon) {////logic for current activity
+            if(fromSearch){
+                finish();
+            }else {
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivity(searchIntent);
+            }
             return true;
         } else if (id == R.id.main_cart_icon) {
             if (currentUser == null) {
@@ -834,6 +851,12 @@ private boolean inStock;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        fromSearch = false;
     }
 
     @Override

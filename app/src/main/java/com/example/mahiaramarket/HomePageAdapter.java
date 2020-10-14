@@ -24,6 +24,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
     private List<HomePageModel> homePageModelList;
     private RecyclerView.RecycledViewPool recycledViewPool;
     private int lastPosition = -1;
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private Object stripAdBannerViewHolder;
 
 
@@ -265,9 +270,49 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             horizontalRecyclerView = itemView.findViewById(R.id.horizontal_scroll_layout_recyclerview);
             horizontalRecyclerView.setRecycledViewPool(recycledViewPool);
         }
-        private void setHorizontalProductLayout(List<HorizontalScrollProductModel>horizontalScrollProductModelList, final String title, String color, final List<WishlistModel>viewAllProductList){
+        private void setHorizontalProductLayout(final List<HorizontalScrollProductModel>horizontalScrollProductModelList, final String title, String color, final List<WishlistModel>viewAllProductList){
             container.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(color)));
             horizontalLayoutTitle.setText(title);
+
+            for(final HorizontalScrollProductModel model:horizontalScrollProductModelList){
+                if(!model.getProductID().isEmpty() && model.getProductTitle().isEmpty() ){
+                    firebaseFirestore.collection("PRODUCTS")
+                            .document(model.getProductID())
+                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                model.setProductTitle(task.getResult().getString("product_title"));
+                                model.setProductImage(task.getResult().getString("product_image_1"));
+                                model.setProductPrice(task.getResult().getString("product_price"));
+
+                                WishlistModel wishlistModel = viewAllProductList
+                                        .get(horizontalScrollProductModelList.indexOf(model));
+                                wishlistModel.setTotalRating(task.getResult().getLong("total_rating"));
+                                wishlistModel.setRating(task.getResult().getString("average_rating"));
+                                wishlistModel.setProductTitle(task.getResult().getString("product_title"));
+                                wishlistModel.setProductPrice(task.getResult().getString("product_price"));
+                                wishlistModel.setProductImage(task.getResult().getString("product_image_1"));
+                                wishlistModel.setFreeCoupens(task.getResult().getLong("free_coupens"));
+                                wishlistModel.setCuttedPrice(task.getResult().getString("cutted_price"));
+                                wishlistModel.setCod(task.getResult().getBoolean("COD"));
+                                wishlistModel.setInStock(task.getResult().getLong("stock_quantity")>0);
+
+                                if(horizontalScrollProductModelList.indexOf(model) == horizontalScrollProductModelList.size()-1){
+                                    if(horizontalRecyclerView.getAdapter()!=null){
+                                        horizontalRecyclerView.getAdapter().notifyDataSetChanged();
+                                    }
+                                }
+
+
+                            }else {
+                                /////////do nothing
+                            }
+                        }
+                    });
+                }
+            }
+
             if(horizontalScrollProductModelList.size()>8){
                 horizontalViewAllBtn.setVisibility(View.VISIBLE);
                 horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
@@ -316,14 +361,56 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             gridLayoutTitle.setText(title);
 
 
+            for(final HorizontalScrollProductModel model:horizontalScrollProductModelList){
+                if(!model.getProductID().isEmpty() && model.getProductTitle().isEmpty() ){
+                    firebaseFirestore.collection("PRODUCTS")
+                            .document(model.getProductID())
+                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                model.setProductTitle(task.getResult().getString("product_title"));
+                                model.setProductImage(task.getResult().getString("product_image_1"));
+                                model.setProductPrice(task.getResult().getString("product_price"));
+
+
+                                if(horizontalScrollProductModelList.indexOf(model) == horizontalScrollProductModelList.size()-1){
+                                    setGridData(title,horizontalScrollProductModelList);
+                                    if(!title.equals("")) {
+                                        gridlayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                ViewAllActivity.horizontalScrollProductModelList = horizontalScrollProductModelList;
+
+                                                Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                                                viewAllIntent.putExtra("layout_code", 1);
+                                                viewAllIntent.putExtra("title", title);
+                                                itemView.getContext().startActivity(viewAllIntent);
+                                            }
+                                        });
+                                    }
+                                }
+
+
+                            }else {
+                                /////////do nothing
+                            }
+                        }
+                    });
+                }
+            }
+            setGridData(title,horizontalScrollProductModelList);
+
+        }
+        private  void setGridData(String title, final List<HorizontalScrollProductModel> horizontalScrollProductModelList){
             for(int x = 0;x<4;x++){
                 ImageView productImage = gridProductLayout.getChildAt(x).findViewById(R.id.horizontal_hs_product_image);
                 TextView productTitle = gridProductLayout.getChildAt(x).findViewById(R.id.h_s_product_title);
                 TextView productDescription = gridProductLayout.getChildAt(x).findViewById(R.id.h_s_product_description);
                 TextView productPrice = gridProductLayout.getChildAt(x).findViewById(R.id.h_s_product_price);
 //////////Glide view//////////
-               Glide.with(itemView.getContext()).load(horizontalScrollProductModelList.get(x).getProductImage()).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(productImage);
-               //////////Glide view//////////
+                Glide.with(itemView.getContext()).load(horizontalScrollProductModelList.get(x).getProductImage()).apply(new RequestOptions().placeholder(R.mipmap.placeholder_small)).into(productImage);
+                //////////Glide view//////////
                 productTitle.setText(horizontalScrollProductModelList.get(x).getProductTitle());
                 productDescription.setText(horizontalScrollProductModelList.get(x).getProductDescription());
                 productPrice.setText("Rs."+horizontalScrollProductModelList.get(x).getProductPrice()+"/-");
@@ -344,19 +431,6 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                 }
             }
 
-            if(!title.equals("")) {
-                gridlayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ViewAllActivity.horizontalScrollProductModelList = horizontalScrollProductModelList;
-
-                        Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
-                        viewAllIntent.putExtra("layout_code", 1);
-                        viewAllIntent.putExtra("title", title);
-                        itemView.getContext().startActivity(viewAllIntent);
-                    }
-                });
-            }
         }
     }
 }

@@ -13,7 +13,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@drawable/main_activity_background</item>
+        <item name="android:windowBackground">@drawable/splash_activity_background</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -27,8 +27,6 @@
         <item name="colorPrimaryDark">@color/recyclerViewBackground</item>
         <item name="colorAccent">@android:color/holo_blue_dark</item>
     </style>
-
-
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

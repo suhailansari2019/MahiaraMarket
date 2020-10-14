@@ -45,6 +45,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     //////////////////////
 
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
+
     implementation compile('com.paytm:pgplussdk:1.4.4') {
         transitive = true;
     }

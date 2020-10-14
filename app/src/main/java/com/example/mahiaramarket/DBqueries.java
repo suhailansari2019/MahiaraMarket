@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -20,12 +21,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +42,9 @@ public class DBqueries {
 
 
     public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+    public static  String email,fullname,profile;
+
     public static List<CategoryModel> categoryModelList = new ArrayList<>();
 
 
@@ -57,6 +67,11 @@ public class DBqueries {
     public static List<AddressesModel> addressesModelList = new ArrayList<>();
 
     public static List<RewardModel> rewardModelList = new ArrayList<>();
+
+    public static  List<MyOrderItemModel>myOrderItemModelList = new ArrayList<>();
+
+    public static  List<NotificationModel> notificationModelList = new ArrayList<>();
+    public static ListenerRegistration registration;
 
 
     /////categories queries///////////
@@ -113,35 +128,41 @@ public class DBqueries {
 
                                     List<WishlistModel> viewAllProductList = new ArrayList<>();
                                     List<HorizontalScrollProductModel> horizontalScrollProductModelList = new ArrayList<>();
-                                    long no_of_products = (long) documentSnapshot.get("no_of_products");
-                                    for (long x = 1; x < no_of_products + 1; x++) {
-                                        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(documentSnapshot.get("product_ID_" + x).toString()
-                                                , documentSnapshot.get("product_image_" + x).toString()
-                                                , documentSnapshot.get("product_title_" + x).toString()
-                                                , documentSnapshot.get("product_subtitle_" + x).toString()
-                                                , documentSnapshot.get("product_price_" + x).toString()));
 
-                                        viewAllProductList.add(new WishlistModel(documentSnapshot.get("product_ID_" + x).toString(), documentSnapshot.get("product_image_" + x).toString()
-                                                , documentSnapshot.get("product_full_title_" + x).toString()
-                                                , (long) documentSnapshot.get("free_coupens_" + x)
-                                                , documentSnapshot.get("average_rating_" + x).toString()
-                                                , (long) documentSnapshot.get("total_rating_" + x)
-                                                , documentSnapshot.get("product_price_" + x).toString()
-                                                , documentSnapshot.get("cutted_price_" + x).toString()
-                                                , (boolean) documentSnapshot.get("COD_" + x)
-                                                , (boolean) documentSnapshot.get("in_stock_" + x)));
+
+
+                                   ArrayList<String>productIds = (ArrayList<String>) documentSnapshot.get("products");
+
+                                    for (String productId : productIds) {
+                                        horizontalScrollProductModelList.add(new HorizontalScrollProductModel(productId
+                                                , ""
+                                                , ""
+                                                , ""
+                                                , ""));
+
+                                        viewAllProductList.add(new WishlistModel(productId
+                                                ,""
+                                                , ""
+                                                , 0
+                                                , ""
+                                                , 0
+                                                , ""
+                                                , ""
+                                                , false
+                                                , false));
                                     }
                                     list.get(index).add(new HomePageModel(2, documentSnapshot.get("layout_title").toString(), documentSnapshot.get("layout_background").toString(), horizontalScrollProductModelList, viewAllProductList));
 
                                 } else if ((long) documentSnapshot.get("view_type") == 3) {
                                     List<HorizontalScrollProductModel> GridLayoutModelList = new ArrayList<>();
-                                    long no_of_products = (long) documentSnapshot.get("no_of_products");
-                                    for (long x = 1; x < no_of_products + 1; x++) {
-                                        GridLayoutModelList.add(new HorizontalScrollProductModel(documentSnapshot.get("product_ID_" + x).toString()
-                                                , documentSnapshot.get("product_image_" + x).toString()
-                                                , documentSnapshot.get("product_title_" + x).toString()
-                                                , documentSnapshot.get("product_subtitle_" + x).toString()
-                                                , documentSnapshot.get("product_price_" + x).toString()));
+                                    ArrayList<String>productIds = (ArrayList<String>) documentSnapshot.get("products");
+
+                                    for (String productId : productIds) {
+                                        GridLayoutModelList.add(new HorizontalScrollProductModel(productId
+                                                , ""
+                                                , ""
+                                                , ""
+                                                , ""));
                                     }
                                     list.get(index).add(new HomePageModel(3, documentSnapshot.get("layout_title").toString(), documentSnapshot.get("layout_background").toString(), GridLayoutModelList));
 
@@ -292,7 +313,7 @@ public class DBqueries {
 
     ////ratings method//////
     public static void loadRatingList(final Context context) {
-        if (ProductDetailsActivity.running_rating_query) {
+        if (!ProductDetailsActivity.running_rating_query) {////not equal code here
             ProductDetailsActivity.running_rating_query = true;
 
             myRatedIds.clear();
@@ -302,6 +323,11 @@ public class DBqueries {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
+                        List<String> orderProductIds = new ArrayList<>();
+                        for(int x= 0;x<myOrderItemModelList.size();x++){
+                            orderProductIds.add(myOrderItemModelList.get(x).getProductId());
+                        }
+
                         for (long x = 0; x < (long) task.getResult().get("list_size"); x++) {
                             myRatedIds.add(task.getResult().get("product_ID_" + x).toString());
                             myRating.add((long) task.getResult().get("rating_" + x));
@@ -311,6 +337,13 @@ public class DBqueries {
                                     ProductDetailsActivity.setRating(ProductDetailsActivity.initialRating);
                                 }
                             }
+                            if(orderProductIds.contains(task.getResult().get("product_ID_" + x).toString())){
+                                myOrderItemModelList.get(orderProductIds.indexOf(task.getResult().get("product_ID_" + x).toString())).setRating(Integer.parseInt(String.valueOf((long) task.getResult().get("rating_" + x))) - 1);
+
+                            }
+                        }
+                        if(MyOrderFragment.myOrderAdapter != null){
+                            MyOrderFragment.myOrderAdapter.notifyDataSetChanged();
                         }
 
 
@@ -368,25 +401,25 @@ public class DBqueries {
 
 
                                                             if (task.getResult().getDocuments().size() < (long) documentSnapshot.get("stock_quantity")) {
-                                                                cartItemModelList.add(index, new CartItemModel(CartItemModel.CART_ITEM, productid, documentSnapshot.get("product_image_1").toString()
+                                                                cartItemModelList.add(index, new CartItemModel(documentSnapshot.getBoolean("COD"),CartItemModel.CART_ITEM, productid, documentSnapshot.get("product_image_1").toString()
                                                                         , documentSnapshot.get("product_title").toString()
                                                                         , (long) documentSnapshot.get("free_coupens")
                                                                         , documentSnapshot.get("product_price").toString()
                                                                         , documentSnapshot.get("cutted_price").toString()
                                                                         , (long) 1
-                                                                        , (long) 0
+                                                                        , (long) documentSnapshot.get("offers_applied")
                                                                         , (long) 0
                                                                         , true
                                                                         , (Long) documentSnapshot.get("max-quantity")
                                                                         , (Long) documentSnapshot.get("stock_quantity")));
                                                             } else {
-                                                                cartItemModelList.add(index, new CartItemModel(CartItemModel.CART_ITEM, productid, documentSnapshot.get("product_image_1").toString()
+                                                                cartItemModelList.add(index, new CartItemModel(documentSnapshot.getBoolean("COD"),CartItemModel.CART_ITEM, productid, documentSnapshot.get("product_image_1").toString()
                                                                         , documentSnapshot.get("product_title").toString()
                                                                         , (long) documentSnapshot.get("free_coupens")
                                                                         , documentSnapshot.get("product_price").toString()
                                                                         , documentSnapshot.get("cutted_price").toString()
                                                                         , (long) 1
-                                                                        , (long) 0
+                                                                        , (long) documentSnapshot.get("offers_applied")
                                                                         , (long) 0
                                                                         , false
                                                                         , (Long) documentSnapshot.get("max-quantity")
@@ -483,7 +516,7 @@ public class DBqueries {
 
     /////////////////Remove from cart method/////////////////////
     //////////////Addressess add//////////////////
-    public static void loadAddresses(final Context context, final Dialog loadingDialog) {
+    public static void loadAddresses(final Context context, final Dialog loadingDialog, final boolean gotoDeliveryActivity) {
 
         addressesModelList.clear();
         firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_DATA").document("MY_ADDRESSES")
@@ -491,24 +524,34 @@ public class DBqueries {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    Intent deliveryIntent;
+                    Intent deliveryIntent = null;
                     if ((long) task.getResult().get("list_size") == 0) {
                         deliveryIntent = new Intent(context, AddAddressActivity.class);
                         deliveryIntent.putExtra("INTENT", "deliveryIntent");
                     } else {
                         for (long x = 1; x < (long) task.getResult().get("list_size") + 1; x++) {
-                            addressesModelList.add(new AddressesModel(task.getResult().get("fullname_" + x).toString(),
-                                    task.getResult().get("address_" + x).toString(),
-                                    task.getResult().get("pincode_" + x).toString(),
-                                    (boolean) task.getResult().get("selected_" + x),
-                                    task.getResult().get("mobile_no_" + x).toString()));
+                            addressesModelList.add(new AddressesModel(task.getResult().getBoolean("selected_"+x)
+                            ,task.getResult().getString("city_"+x)
+                                    ,task.getResult().getString("locality_"+x)
+                                    ,task.getResult().getString("flate_no_"+x)
+                                    ,task.getResult().getString("pincode_"+x)
+                                    ,task.getResult().getString("landmark_"+x)
+                                    ,task.getResult().getString("name_"+x)
+                                    ,task.getResult().getString("mobile_no_"+x)
+                                    ,task.getResult().getString("alternate_mobile_no_"+x)
+                                    ,task.getResult().getString("state_"+x)
+                            ));
                             if ((boolean) task.getResult().get("selected_" + x)) {
                                 selectedAddress = Integer.parseInt(String.valueOf(x - 1));
                             }
                         }
-                        deliveryIntent = new Intent(context, DeliveryActivity.class);
-                    }
+                        if(gotoDeliveryActivity) {
+                            deliveryIntent = new Intent(context, DeliveryActivity.class);
+                        }
+                        }
+                    if(gotoDeliveryActivity){
                     context.startActivity(deliveryIntent);
+                    }
                 } else {
                     String error = task.getException().getMessage();
                     Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
@@ -521,49 +564,178 @@ public class DBqueries {
 
     /////////////Rewards Methods///////////
 
-    public static void loadRewards(final Context context, final Dialog loadingDialog) {
+    public static void loadRewards(final Context context, final Dialog loadingDialog, final Boolean onRewardFragment) {
         rewardModelList.clear();
-        firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_REWARDS").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                if (documentSnapshot.get("type").toString().equals("Discount")) {
-                                    rewardModelList.add(new RewardModel(documentSnapshot.get("type").toString()
-                                            , documentSnapshot.get("lower_limit").toString()
-                                            , documentSnapshot.get("upper_limit").toString()
-                                            , documentSnapshot.get("percentage").toString()
-                                            , documentSnapshot.get("body").toString()
-//                                            , (Date) documentSnapshot.get("validity")
-                                            ,documentSnapshot.getTimestamp("validity").toDate()
-                                    ));
-                                } else {
-                                    rewardModelList.add(new RewardModel(documentSnapshot.get("type").toString()
-                                            , documentSnapshot.get("lower_limit").toString()
-                                            , documentSnapshot.get("upper_limit").toString()
-                                            , documentSnapshot.get("amount").toString()
-                                            , documentSnapshot.get("body").toString()
-//                                            , (Date) documentSnapshot.get("validity")
-                                            ,documentSnapshot.getTimestamp("validity").toDate()
-                                    ));
-                                }
-                            }
-                            MyRewardsFragment.myRewardsAdapter.notifyDataSetChanged();
 
-                        } else {
-                            ///error handling
+        firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            final Date lastseenDate = task.getResult().getDate("Last seen");
+                            firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_REWARDS").get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                                    if (documentSnapshot.get("type").toString().equals("Discount") && lastseenDate.before(documentSnapshot.getDate("validity")) ) {
+                                                        rewardModelList.add(new RewardModel(documentSnapshot.getId(),documentSnapshot.get("type").toString()
+                                                                , documentSnapshot.get("lower_limit").toString()
+                                                                , documentSnapshot.get("upper_limit").toString()
+                                                                , documentSnapshot.get("percentage").toString()
+                                                                , documentSnapshot.get("body").toString()
+//                                            , (Date) documentSnapshot.get("validity")
+                                                                ,documentSnapshot.getTimestamp("validity").toDate()
+                                                        ,(boolean)documentSnapshot.get("already_used")));
+                                                    } else if(documentSnapshot.get("type").toString().equals("Flate Rs. *OFF") && lastseenDate.before(documentSnapshot.getDate("validity"))) {
+                                                        rewardModelList.add(new RewardModel(documentSnapshot.getId(),documentSnapshot.get("type").toString()
+                                                                , documentSnapshot.get("lower_limit").toString()
+                                                                , documentSnapshot.get("upper_limit").toString()
+                                                                , documentSnapshot.get("amount").toString()
+                                                                , documentSnapshot.get("body").toString()
+//                                            , (Date) documentSnapshot.get("validity")
+                                                                ,documentSnapshot.getTimestamp("validity").toDate()
+                                                        ,(boolean)documentSnapshot.get("already_used")));
+                                                    }
+                                                }
+                                                if(onRewardFragment) {
+                                                    MyRewardsFragment.myRewardsAdapter.notifyDataSetChanged();
+                                                }
+                                            } else {
+                                                ///error handling
+                                                String error = task.getException().getMessage();
+                                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            loadingDialog.dismiss();
+
+                                        }
+                                    });
+                        }else {
+                            ////eroor
+                            loadingDialog.dismiss();
                             String error = task.getException().getMessage();
                             Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
                         }
-                        loadingDialog.dismiss();
-
                     }
                 });
+
+
     }
 
     /////////////Rewards Methods///////////
 
+
+    ////////////////Load Order data method//////////////
+    public static void loadOrders(final Context context, @Nullable final MyOrderAdapter myOrderAdapter, final Dialog loadingDialog){
+        myOrderItemModelList.clear();
+        firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_ORDER").orderBy("time", Query.Direction.DESCENDING).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(DocumentSnapshot documentSnapshot : task.getResult().getDocuments()){
+
+                                firebaseFirestore.collection("ORDERS").document(documentSnapshot.getString("order_id")).collection("OrderItems").get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful()){
+
+                                                    for(DocumentSnapshot orderItems : task.getResult().getDocuments()) {
+
+                                                        final MyOrderItemModel myOrderItemModel = new MyOrderItemModel(orderItems.getString("Product Id"),
+                                                                orderItems.getString("Order Status")
+                                                                , orderItems.getString("Address")
+                                                                , orderItems.getString("Coupen Id")
+                                                                , orderItems.getString("Cutted Price")
+                                                                , orderItems.getDate("Order date")
+                                                                , orderItems.getDate("Packed date")
+                                                                , orderItems.getDate("Shipped date")
+                                                                , orderItems.getDate("Delivered date")
+                                                                , orderItems.getDate("Cancelled date")
+                                                                , orderItems.getString("Discounted Price")
+                                                                , orderItems.getLong("Free Coupens")
+                                                                , orderItems.getString("FullName")
+                                                                , orderItems.getString("ORDER ID")
+                                                                , orderItems.getString("Payment Method")
+                                                                , orderItems.getString("Pincode")
+                                                                , orderItems.getString("Product Price")
+                                                                , orderItems.getLong("Product Quantity")
+                                                                , orderItems.getString("User Id")
+                                                                , orderItems.getString("Product Image")
+                                                                , orderItems.getString("Product Title")
+                                                                , orderItems.getString("Delivery Price")
+                                                                , orderItems.getBoolean("Cancellation requested"));
+                                                        myOrderItemModelList.add(myOrderItemModel);
+
+                                                    }
+
+                                                        loadRatingList(context);
+
+                                                    if(myOrderAdapter != null) {
+                                                        myOrderAdapter.notifyDataSetChanged();
+                                                    }
+                                                }else {
+                                                    String error = task.getException().getMessage();
+                                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+                                                }
+                                                loadingDialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }else {
+                            loadingDialog.dismiss();
+                            String error = task.getException().getMessage();
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+    ////////////////Load Order data method//////////////
+
+    /////////////notification Method///////////
+
+    public static void checkNotification(boolean remove, @Nullable final TextView notifyCount){
+if(remove){
+    registration.remove();
+}else {
+    registration =  firebaseFirestore.collection("USER").document(FirebaseAuth.getInstance().getUid()).collection("USER_DATA").document("MY_NOTIFICATION")
+            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException error) {
+                    if(documentSnapshot != null && documentSnapshot.exists()){
+                        notificationModelList.clear();
+                        int unread =0;
+                        for (long x = 0; x < (long) documentSnapshot.get("list_size"); x++) {
+                            notificationModelList.add(0,new NotificationModel(documentSnapshot.get("Image_"+x).toString(),documentSnapshot.get("Body_"+x).toString(),documentSnapshot.getBoolean("Readed_"+x)));
+                            if(!documentSnapshot.getBoolean("Readed_"+x)){
+                                unread++;
+                                if(notifyCount != null){
+                                    if(unread > 0) {
+                                        notifyCount.setVisibility(View.VISIBLE);
+                                        if (unread < 99) {
+                                            notifyCount.setText(String.valueOf(unread));
+                                        } else {
+                                            notifyCount.setText("99");
+                                        }
+                                    }else {
+                                        notifyCount.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            }
+                        }
+                        if(NotificationActivity.adapter != null){
+                            NotificationActivity.adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            });
+}
+
+    }
+
+    /////////////notification Method///////////
 
     ////////Clear Data Method/////////
     public static void clearData() {
@@ -578,8 +750,10 @@ public class DBqueries {
         myRating.clear();
         addressesModelList.clear();
         rewardModelList.clear();
+        myOrderItemModelList.clear();
     }
     ////////Clear data  Method/////////
+
 
 
 }
